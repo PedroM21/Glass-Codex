@@ -32,7 +32,7 @@ export default function CharactersPage() {
   return (
     <div>
       <h1 className="text-[61.04px]">All Characters</h1>
-      <div className="flex gap-4 bg-[#26374d]">
+      <div className="flex gap-4">
         {characters.map((character: any) => (
           <div key={character.id}>
             <CharacterCard character={character} />

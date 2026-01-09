@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "motion/react";
 // import CloudinaryUploadWidget from "./cloudinary";
 
 // palette: #DDe6ed, #9Db2bf, #536d82, #26374d
@@ -9,6 +8,6 @@ import { motion } from "motion/react";
 
 export default function Home() {
   return (
-    <motion.div className="flex min-h-screen items-center justify-center bg-white"></motion.div>
+    <div className="flex min-h-screen items-center justify-center bg-white"></div>
   );
 }

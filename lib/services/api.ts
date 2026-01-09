@@ -74,6 +74,27 @@ export const FetchCharacters = async (token: string) => {
   }
 };
 
+export const FetchSpecificCharacter = async (token: string, id: string) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/character/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch character.");
+    }
+    return data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const CreateCharacter = async (
   formData: {
     name: string;

@@ -1,7 +1,7 @@
 import { db } from "@/db/index";
 import { artworksTable, charactersTable } from "@/db/schemas/schema";
 import { NextResponse } from "next/server";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { authCheck } from "./auth";
 
 // View all characters for a user
@@ -36,6 +36,72 @@ export const getCharacters = async (req: Request) => {
         success: true,
         message: "Characters fetched successfully",
         data: { characters: charactersWithArtworks },
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
+  }
+};
+
+// Get specific character
+export const getSpecificCharacter = async (
+  req: Request,
+  context: { params: any }
+) => {
+  try {
+    const { params } = context;
+    // verify
+    const user = await authCheck(req);
+
+    const unwrappedParams = await params;
+    const characterId = Number(unwrappedParams.id);
+
+    if (isNaN(characterId)) {
+      return NextResponse.json(
+        { message: "Invalid character ID" },
+        { status: 400 }
+      );
+    }
+
+    // fetch characters from the database
+    const character = await db
+      .select()
+      .from(charactersTable)
+      .where(
+        and(
+          eq(charactersTable.id, characterId),
+          eq(charactersTable.userId, user.id)
+        )
+      )
+      .limit(1);
+
+    if (!character.length) {
+      return NextResponse.json(
+        { message: "Character not found" },
+        { status: 404 }
+      );
+    }
+
+    // fetch artworks specific character
+    const artworks = await db
+      .select()
+      .from(artworksTable)
+      .where(eq(artworksTable.characterId, characterId));
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          character: {
+            ...character[0],
+            artworks,
+          },
+        },
       },
       { status: 200 }
     );
