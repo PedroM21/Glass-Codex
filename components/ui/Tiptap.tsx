@@ -6,6 +6,7 @@ import type { JSONContent } from "@tiptap/core";
 import FormatBoldIcon from "@mui/icons-material/FormatBold";
 import FormatItalicIcon from "@mui/icons-material/FormatItalic";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
+import { useState } from "react";
 
 type RichTextDoc = JSONContent;
 
@@ -14,6 +15,7 @@ type TipTapProps = {
 };
 
 const TipTap = ({ content }: TipTapProps) => {
+  const [, setSelectionVersion] = useState(0);
   const safeContent =
     content?.type === "doc" ? content : { type: "doc", content: [] };
 
@@ -23,17 +25,25 @@ const TipTap = ({ content }: TipTapProps) => {
     immediatelyRender: false,
     editorProps: {
       attributes: {
-        class: "border rounded-md min-h-50 max-h-70 overflow-y-auto py-2 px-3",
+        class:
+          "border rounded-md min-h-50 max-h-70 overflow-y-auto py-2 px-3 prose prose-sm",
       },
     },
+    onSelectionUpdate: () => {
+      setSelectionVersion((v) => v + 1);
+    },
   });
+
+  console.log(editor);
 
   return (
     <div className="bg-white rounded-xl p-4 border">
       <div className="flex gap-2 pb-2">
         <button
           className={
-            editor?.isActive("bold") ? "bg-blue-400" : "hover:bg-gray-300"
+            editor?.isActive("bold")
+              ? "is-active bg-blue-400"
+              : "hover:bg-gray-300"
           }
           onClick={() => editor?.chain().focus().toggleBold().run()}
         >

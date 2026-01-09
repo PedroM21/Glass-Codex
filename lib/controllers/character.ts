@@ -55,8 +55,6 @@ export const getSpecificCharacter = async (
 ) => {
   try {
     const { params } = context;
-    // verify
-    const user = await authCheck(req);
 
     const unwrappedParams = await params;
     const characterId = Number(unwrappedParams.id);
@@ -67,6 +65,9 @@ export const getSpecificCharacter = async (
         { status: 400 }
       );
     }
+
+    // verify
+    const user = await authCheck(req);
 
     // fetch characters from the database
     const character = await db
@@ -161,12 +162,64 @@ export const createCharacter = async (req: Request) => {
       },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("Create character error: ", error);
     return NextResponse.json(
       {
         success: false,
-        message: error?.message || "Failed to create character",
+        message: "Failed to create character",
+      },
+      { status: 500 }
+    );
+  }
+};
+
+// DELETE a character
+export const deleteCharacter = async (
+  req: Request,
+  context: { params: Promise<{ id: string }> }
+) => {
+  try {
+    const { id } = await context.params;
+    const numericId = Number(id);
+
+    if (Number.isNaN(numericId)) {
+      return NextResponse.json(
+        { success: false, message: "Invalid character id." },
+        { status: 400 }
+      );
+    }
+
+    // verify user
+    const user = await authCheck(req);
+
+    const result = await db
+      .delete(charactersTable)
+      .where(
+        and(eq(charactersTable.id, id), eq(charactersTable.userId, user.id))
+      )
+      .returning({ id: charactersTable.id });
+
+    if (result.length === 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Character not found or unauthorized",
+        },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Character deleted successfully.",
+    });
+  } catch (error) {
+    console.error("Error deleting character: ", error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Failed to delete character",
       },
       { status: 500 }
     );

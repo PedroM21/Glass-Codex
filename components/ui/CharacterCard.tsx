@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import Image from "next/image";
 import Parchment from "@/public/parchment.png";
+import Button from "./Button";
 
 type Artwork = {
   id: number;
@@ -72,6 +73,9 @@ export default function CharacterCard({ character }: { character: Character }) {
           <p className="text-[16px] text-[#2B2B2B] text-center">
             {character.role}
           </p>
+          <button className="bg-[#536D82] text-[#FAF7F2] px-6 py-3 rounded-md font-semibold cursor-pointer z-50">
+            Delete
+          </button>
         </motion.div>
       </motion.div>
     </Link>

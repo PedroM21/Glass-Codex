@@ -12,3 +12,20 @@
     font-weight: unset; /* optional */
   }
 }
+
+/* TipTap / ProseMirror list fixes */
+@layer base {
+  .ProseMirror ul {
+    list-style-type: disc;
+    padding-left: 1.25rem;
+  }
+
+  .ProseMirror ol {
+    list-style-type: decimal;
+    padding-left: 1.25rem;
+  }
+
+  .ProseMirror li {
+    margin: 0.25rem 0;
+  }
+}
