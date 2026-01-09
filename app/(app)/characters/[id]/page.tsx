@@ -1,4 +1,5 @@
 "use client";
+import TipTap from "@/components/ui/Tiptap";
 import { FetchSpecificCharacter } from "@/lib/services/api";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -9,6 +10,11 @@ type Artwork = {
   imageURL: string;
 };
 
+type RichTextDoc = {
+  type: "doc";
+  content?: any[];
+};
+
 type Character = {
   id: number;
   name: string;
@@ -16,8 +22,8 @@ type Character = {
   traits: string[];
   flaws: string[];
   arc: string[];
-  narrative: string;
-  purpose: string;
+  narrative: RichTextDoc;
+  purpose: RichTextDoc;
   artworks: Artwork[];
 };
 
@@ -57,33 +63,47 @@ export default function CharacterPage() {
   console.log(character);
 
   return (
-    <div className="p-4">
+    <div>
       <h1 className="text-[64px]">{character.name}</h1>
-      <div className="space-y-4 w-1/4">
-        <div className="flex gap-4 justify-between w-full">
-          <span className="font-semibold">Name</span>
-          <p>{character.name}</p>
+      <div className="flex pt-8 justify-between">
+        <div className="flex flex-col w-1/3 gap-2">
+          <div className="flex gap-4 justify-between w-full border-b">
+            <span className="font-semibold">Name</span>
+            <p>{character.name}</p>
+          </div>
+          <div className="flex gap-4 justify-between w-full border-b">
+            <span className="font-semibold">Role</span>
+            <p>{character.role}</p>
+          </div>
+          <div className="flex gap-4 justify-between w-full border-b">
+            <span className="font-semibold text-right">Traits</span>
+            <p>{character.traits.join(", ")}</p>
+          </div>
+          <div className="flex gap-4 justify-between w-full border-b">
+            <span className="font-semibold">Flaws</span>
+            <p>{character.flaws.join(", ")}</p>
+          </div>
         </div>
-        <div className="flex gap-4 justify-between w-full">
-          <span className="font-semibold">Role</span>
-          <p>{character.role}</p>
-        </div>
-        <div className="flex gap-4 justify-between w-full">
-          <span className="font-semibold text-right">Traits</span>
-          <p>{character.traits.join(", ")}</p>
-        </div>
-        <div className="flex gap-4 justify-between w-full">
-          <span className="font-semibold">Flaws</span>
-          <p>{character.flaws.join(", ")}</p>
+        <div>
+          <Image
+            src={character.artworks[0].imageURL}
+            alt={character.name}
+            loading="eager"
+            width={250}
+            height={250}
+          />
         </div>
       </div>
-      <Image
-        src={character.artworks[0].imageURL}
-        alt={character.name}
-        loading="eager"
-        width={150}
-        height={150}
-      />
+      <div className="flex gap-16">
+        <div className="w-1/2">
+          <h1 className="px-3">Narrative</h1>
+          <TipTap content={character.narrative} />
+        </div>
+        <div className="w-1/2">
+          <h1 className="px-3">Purpose</h1>
+          <TipTap content={character.purpose} />
+        </div>
+      </div>
     </div>
   );
 }

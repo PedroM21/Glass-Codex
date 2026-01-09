@@ -26,8 +26,8 @@ export const charactersTable = pgTable("characters", {
   flaws: jsonb().notNull().$type<string[]>().default([]),
   arcs: jsonb().notNull().$type<string[]>().default([]),
 
-  narrative: text().notNull().default(""),
-  purpose: text().notNull().default(""),
+  narrative: jsonb().notNull().default({}),
+  purpose: jsonb().notNull().default({}),
   createdAt: timestamp().notNull().defaultNow(),
   userId: integer()
     .notNull()
