@@ -4,8 +4,10 @@ import { CldUploadWidget } from "next-cloudinary";
 
 export default function CloudinaryUploadWidget({
   onUpload,
+  children,
 }: {
   onUpload: (url: string, publicId: string) => void;
+  children: (open: () => void) => React.ReactNode;
 }) {
   return (
     <div>
@@ -21,13 +23,7 @@ export default function CloudinaryUploadWidget({
           onUpload(info.secure_url, info.public_id);
         }}
       >
-        {({ open }) => {
-          return (
-            <button type="button" onClick={() => open()}>
-              Upload an Image
-            </button>
-          );
-        }}
+        {({ open }) => children(open)}
       </CldUploadWidget>
     </div>
   );

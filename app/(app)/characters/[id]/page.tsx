@@ -1,6 +1,7 @@
 "use client";
+import Button from "@/components/ui/Button";
 import TipTap from "@/components/ui/Tiptap";
-import { FetchSpecificCharacter } from "@/lib/services/api";
+import { FetchSpecificCharacter, UpdateCharacter } from "@/lib/services/api";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -31,6 +32,18 @@ export default function CharacterPage() {
   const { id } = useParams<{ id: string }>();
   const [character, setCharacter] = useState<Character | null>(null);
   const [loading, setLoading] = useState(true);
+  const [draft, setDraft] = useState<Character | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const [traitsInput, setTraitsInput] = useState("");
+  const [flawsInput, setFlawsInput] = useState("");
+
+  useEffect(() => {
+    if (draft) {
+      setTraitsInput(draft.traits.join(", "));
+      setFlawsInput(draft.flaws.join(", "));
+    }
+  }, [draft]);
 
   useEffect(() => {
     if (!id) {
@@ -47,6 +60,7 @@ export default function CharacterPage() {
 
         const response = await FetchSpecificCharacter(token, id);
         setCharacter(response.character);
+        setDraft(response.character);
       } catch (error) {
         console.log("Error fetching character: ", error);
       } finally {
@@ -58,7 +72,7 @@ export default function CharacterPage() {
   }, [id]);
 
   if (loading) return <p>Loading...</p>;
-  if (!character) return <p>Character not found</p>;
+  if (!character || !draft) return <p>Character not found</p>;
 
   console.log(character);
 
@@ -66,24 +80,109 @@ export default function CharacterPage() {
     <div>
       <h1 className="text-[64px]">{character.name}</h1>
       <div className="flex pt-8 justify-between">
-        <div className="flex flex-col w-1/3 gap-2">
+        <form className="flex flex-col w-1/3 gap-2">
           <div className="flex gap-4 justify-between w-full border-b">
             <span className="font-semibold">Name</span>
-            <p>{character.name}</p>
+            <input
+              value={draft.name}
+              onChange={(e) => {
+                setDraft({ ...draft, name: e.target.value });
+                setIsDirty(true);
+              }}
+              className="border px-2 py-1 rounded"
+            />
           </div>
           <div className="flex gap-4 justify-between w-full border-b">
             <span className="font-semibold">Role</span>
-            <p>{character.role}</p>
+            <input
+              value={draft?.role}
+              onChange={(e) => {
+                setDraft({ ...draft, role: e.target.value });
+                setIsDirty(true);
+              }}
+              className="border px-2 py-1 rounded"
+            />
           </div>
           <div className="flex gap-4 justify-between w-full border-b">
             <span className="font-semibold text-right">Traits</span>
-            <p>{character.traits.join(", ")}</p>
+            <input
+              value={traitsInput}
+              onChange={(e) => setTraitsInput(e.target.value)}
+              onBlur={() => {
+                if (!draft) return;
+                setDraft({
+                  ...draft,
+                  traits: traitsInput
+                    .split(",")
+                    .map((t) => t.trim())
+                    .filter(Boolean),
+                });
+                setIsDirty(true);
+              }}
+            />
           </div>
           <div className="flex gap-4 justify-between w-full border-b">
             <span className="font-semibold">Flaws</span>
-            <p>{character.flaws.join(", ")}</p>
+            <input
+              value={flawsInput}
+              onChange={(e) => setFlawsInput(e.target.value)}
+              onBlur={() => {
+                if (!draft) return;
+                setDraft({
+                  ...draft,
+                  flaws: flawsInput
+                    .split(",")
+                    .map((f) => f.trim())
+                    .filter(Boolean),
+                });
+                setIsDirty(true);
+              }}
+            />
           </div>
-        </div>
+          <Button
+            label={isSaving ? "Saving..." : "Save Changes"}
+            color="bg-[#f1cf79]"
+            textColor="text-[#2B2B2B]"
+            disabled={!isDirty || isSaving}
+            onClick={async () => {
+              if (!draft || !character) return;
+
+              try {
+                setIsSaving(true);
+                const token = localStorage.getItem("token");
+                if (!token) throw new Error("No auth token");
+
+                // update character
+                await UpdateCharacter(
+                  character.id,
+                  {
+                    name: draft.name,
+                    role: draft.role,
+                    traits: draft.traits,
+                    flaws: draft.flaws,
+                    narrative: draft.narrative,
+                    purpose: draft.purpose,
+                  },
+                  token
+                );
+
+                // refetch full character
+                const response = await FetchSpecificCharacter(
+                  token,
+                  character.id.toString()
+                );
+                setCharacter(response.character);
+                setDraft(response.character);
+                setIsDirty(false);
+              } catch (err) {
+                console.error(err);
+                alert("Failed to save changes");
+              } finally {
+                setIsSaving(false);
+              }
+            }}
+          />
+        </form>
         <div>
           <Image
             src={character.artworks[0].imageURL}
@@ -97,11 +196,79 @@ export default function CharacterPage() {
       <div className="flex gap-16">
         <div className="w-1/2">
           <h1 className="px-3">Narrative</h1>
-          <TipTap content={character.narrative} />
+          <TipTap
+            content={draft.narrative ?? { type: "doc", content: [] }}
+            onChange={(doc) => {
+              setDraft({ ...draft, narrative: doc });
+              setIsDirty(true);
+            }}
+          />
+          <Button
+            label="Save Narrative"
+            color="bg-[#f1cf79]"
+            textColor="text-[#2B2B2B]"
+            onClick={async () => {
+              if (!draft) return;
+              setIsSaving(true);
+              const token = localStorage.getItem("token");
+              try {
+                await UpdateCharacter(
+                  character.id,
+                  { narrative: draft.narrative },
+                  token!
+                );
+                const response = await FetchSpecificCharacter(
+                  token!,
+                  character.id.toString()
+                );
+                setCharacter(response.character);
+                setDraft(response.character);
+              } catch (err) {
+                console.error(err);
+                alert("Failed to save narrative");
+              } finally {
+                setIsSaving(false);
+              }
+            }}
+          />
         </div>
         <div className="w-1/2">
           <h1 className="px-3">Purpose</h1>
-          <TipTap content={character.purpose} />
+          <TipTap
+            content={draft.purpose ?? { type: "doc", content: [] }}
+            onChange={(doc) => {
+              setDraft({ ...draft, purpose: doc });
+              setIsDirty(true);
+            }}
+          />
+          <Button
+            label="Save Purpose"
+            color="bg-[#f1cf79]"
+            textColor="text-[#2B2B2B]"
+            onClick={async () => {
+              if (!draft) return;
+              setIsSaving(true);
+              const token = localStorage.getItem("token");
+              try {
+                await UpdateCharacter(
+                  character.id,
+                  { purpose: draft.purpose },
+                  token!
+                );
+                const response = await FetchSpecificCharacter(
+                  token!,
+                  character.id.toString()
+                );
+                setCharacter(response.character);
+                setDraft(response.character);
+              } catch (err) {
+                console.error(err);
+                alert("Failed to save purpose");
+              } finally {
+                setIsSaving(false);
+              }
+            }}
+          />
         </div>
       </div>
     </div>

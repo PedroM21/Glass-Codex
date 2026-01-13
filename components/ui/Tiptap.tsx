@@ -8,15 +8,19 @@ import FormatItalicIcon from "@mui/icons-material/FormatItalic";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import { useState } from "react";
 
-type RichTextDoc = JSONContent;
+type RichTextDoc = {
+  type: "doc";
+  content?: any[];
+};
 
 type TipTapProps = {
   content: RichTextDoc;
+  onChange?: (doc: RichTextDoc) => void;
 };
 
-const TipTap = ({ content }: TipTapProps) => {
+const TipTap = ({ content, onChange }: TipTapProps) => {
   const [, setSelectionVersion] = useState(0);
-  const safeContent =
+  const safeContent: RichTextDoc =
     content?.type === "doc" ? content : { type: "doc", content: [] };
 
   const editor = useEditor({
@@ -28,6 +32,9 @@ const TipTap = ({ content }: TipTapProps) => {
         class:
           "border rounded-md min-h-50 max-h-70 overflow-y-auto py-2 px-3 prose prose-sm",
       },
+    },
+    onUpdate: ({ editor }) => {
+      onChange?.(editor.getJSON() as RichTextDoc);
     },
     onSelectionUpdate: () => {
       setSelectionVersion((v) => v + 1);

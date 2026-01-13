@@ -174,7 +174,96 @@ export const createCharacter = async (req: Request) => {
   }
 };
 
-// DELETE a character
+// Update character details
+export const updateCharacter = async (
+  req: Request,
+  context: { params: { id: string } }
+) => {
+  try {
+    const { params } = context;
+
+    const unwrappedParams = await params;
+    const characterId = Number(unwrappedParams.id);
+
+    if (isNaN(characterId)) {
+      return NextResponse.json(
+        { message: "Invalid character ID" },
+        { status: 400 }
+      );
+    }
+
+    // verify
+    const user = await authCheck(req);
+
+    // parse body
+    const body = await req.json();
+    const { name, role, traits, flaws, narrative, purpose } = body;
+
+    // partial update object
+    const updateData: Record<string, any> = {};
+
+    if (name !== undefined) updateData.name = name;
+    if (role !== undefined) updateData.role = role;
+    if (traits !== undefined) updateData.traits = traits;
+    if (flaws !== undefined) updateData.flaws = flaws;
+    if (narrative !== undefined) updateData.narrative = narrative;
+    if (purpose !== undefined) updateData.purpose = purpose;
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json(
+        { message: "No fields to update" },
+        { status: 400 }
+      );
+    }
+
+    // update + ownership check
+    const [updatedCharacter] = await db
+      .update(charactersTable)
+      .set(updateData)
+      .where(
+        and(
+          eq(charactersTable.id, characterId),
+          eq(charactersTable.userId, user.id)
+        )
+      )
+      .returning();
+
+    if (!updatedCharacter) {
+      return NextResponse.json(
+        { message: "Character not found" },
+        { status: 404 }
+      );
+    }
+
+    // fetch artworks for this character
+    const artworks = await db
+      .select()
+      .from(artworksTable)
+      .where(eq(artworksTable.characterId, characterId));
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Character updated successfully",
+        data: {
+          character: {
+            ...updatedCharacter,
+            artworks,
+          },
+        },
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Update character error: ", error);
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
+  }
+};
+
+// Delete a character
 export const deleteCharacter = async (
   req: Request,
   context: { params: Promise<{ id: string }> }
@@ -225,21 +314,3 @@ export const deleteCharacter = async (
     );
   }
 };
-
-// // User can have multiple characters
-// export const charactersTable = pgTable("characters", {
-//   id: integer().primaryKey().generatedAlwaysAsIdentity(),
-//   name: varchar({ length: 255 }).notNull(),
-//   role: varchar({ length: 255 }).notNull(),
-
-//   traits: jsonb().notNull().$type<string[]>(),
-//   flaws: jsonb().notNull().$type<string[]>(),
-//   arcs: jsonb().notNull().$type<string[]>(),
-
-//   narrative: text().notNull(),
-//   purpose: text().notNull(),
-//   createdAt: timestamp().notNull().defaultNow(),
-//   userId: integer()
-//     .notNull()
-//     .references(() => usersTable.id, { onDelete: "cascade" }),
-// });

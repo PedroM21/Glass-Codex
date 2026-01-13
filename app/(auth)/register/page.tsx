@@ -4,6 +4,8 @@
 "use client";
 import { useState } from "react";
 import { Register } from "@/lib/services/api";
+import Button from "@/components/ui/Button";
+import Link from "next/link";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -38,49 +40,59 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="border border-black min-h-screen">
-      <main className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 min-h-screen items-center justify-center">
-        <section className="col-span-4 md:col-span-8 lg:col-span-6 lg:col-start-4 flex flex-col bg-[#26374d] text-white rounded-xl p-8 gap-4">
-          <h1 className="text-center">Register Page</h1>
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col items-center gap-4"
-          >
-            <label htmlFor="username">Username</label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              className="bg-[#DDe6ed] w-1/2 text-black p-2"
-            ></input>
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="bg-[#DDe6ed] w-1/2 text-black p-2"
-            ></input>
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="bg-[#DDe6ed] w-1/2 text-black p-2"
-            ></input>
-            <button type="submit" className="bg-[#9Db2bf] p-2 cursor-pointer">
-              Submit
-            </button>
-            {error && <p className="text-red-500">{error}</p>}
-            {success && <p className="text-green-500">{success}</p>}
-          </form>
-        </section>
-      </main>
-    </div>
+    <main className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 min-h-screen items-center justify-center bg-[#F9F6E5]">
+      <section className="col-span-4 md:col-span-8 lg:col-span-4 lg:col-start-5 flex flex-col bg-[#1b3153] text-white rounded-2xl p-8 gap-4 drop-shadow-xl">
+        <h1 className="text-center text-[39.06px]">Create a New Account</h1>
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col items-center gap-4"
+        >
+          <label htmlFor="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="username"
+            value={formData.username}
+            onChange={handleChange}
+            className="bg-[#eff5f6] w-1/2 text-[#2B2B2B] p-2 rounded-2xl"
+          ></input>
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="password"
+            value={formData.password}
+            onChange={handleChange}
+            className="bg-[#eff5f6] w-1/2 text-[#2B2B2B] p-2 rounded-2xl"
+          ></input>
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="email"
+            value={formData.email}
+            onChange={handleChange}
+            className="bg-[#eff5f6] w-1/2 text-[#2B2B2B] p-2 rounded-2xl"
+          ></input>
+          <div className="flex gap-1 pt-2">
+            <p>Already have an account?</p>
+            <Link href="/login" className="text-blue-400 border-b">
+              Login Here
+            </Link>
+          </div>
+          <Button
+            type="submit"
+            label="Submit"
+            color="bg-[#f1cf79]"
+            textColor="text-[#2B2B2B]"
+          />
+          {error && <p className="text-red-500">{error}</p>}
+          {success && <p className="text-green-500">{success}</p>}
+        </form>
+      </section>
+    </main>
   );
 }

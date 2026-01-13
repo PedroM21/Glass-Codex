@@ -95,6 +95,26 @@ export const FetchSpecificCharacter = async (token: string, id: string) => {
   }
 };
 
+// Delete Character
+export const DeleteCharacter = async (token: string, id: number) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/character/delete/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.ok) {
+      console.log("Character Deleted Successfully");
+    }
+  } catch (error) {
+    console.log("Failed to delete character");
+    throw error;
+  }
+};
+
+// Create Character
 export const CreateCharacter = async (
   formData: {
     name: string;
@@ -123,4 +143,35 @@ export const CreateCharacter = async (
   } catch (error) {
     throw error;
   }
+};
+
+// Update Character
+export const UpdateCharacter = async (
+  id: number,
+  payload: Partial<{
+    name: string;
+    role: string;
+    traits: string[];
+    flaws: string[];
+    narrative: any;
+    purpose: any;
+  }>,
+  token: string
+) => {
+  const response = await fetch(`${BASE_URL}/api/character/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to update character");
+  }
+
+  return data.character;
 };
