@@ -9,21 +9,23 @@ export default function Sidebar() {
     <div className="col-span-4 md:col-span-8 lg:col-span-2 min-h-screen bg-[#1b3153] text-white p-4 space-y-4">
       <div className="flex gap-2 text-[31.25px] items-center">
         <Dashboard />
-        <Link href="/dashboard" className="">
-          Dashboard
+        <Link href="/dashboard" className="text-[31.25px]">
+          <h1>Dashboard</h1>
         </Link>
       </div>
       <div className="flex gap-2 text-[31.25px] items-center">
         <CharacterIcon />
-        <Link href="/characters">Characters</Link>
+        <Link href="/characters" className="text-[31.25px]">
+          <h1>Characters</h1>
+        </Link>
       </div>
       <div className="flex gap-2 opacity-50 text-[31.25px] items-center">
         <PlotIcon />
-        <h1>Plot</h1>
+        <h1 className="text-[31.25px]">Plot</h1>
       </div>
       <div className="flex gap-2 opacity-50 text-[31.25px] items-center">
         <LoreIcon />
-        <h1>Lore</h1>
+        <h1 className="text-[31.25px]">Lore</h1>
       </div>
     </div>
   );

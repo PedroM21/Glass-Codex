@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap");
 @import "tailwindcss";
 
 /* override heading reset */
@@ -10,6 +12,36 @@
   h6 {
     font-size: unset; /* or initial */
     font-weight: unset; /* optional */
+    font-family: "Patrick Hand";
+  }
+  h1 {
+    line-height: 100%;
+  }
+  h2 {
+    line-height: 110%;
+  }
+  h3 {
+    line-height: 120%;
+  }
+  h4 {
+    line-height: 130%;
+  }
+  h5 {
+    line-height: 140%;
+  }
+  h6 {
+    line-height: 140%;
+  }
+
+  body,
+  p,
+  a,
+  li,
+  span,
+  button {
+    font-family: "EB Garamond", serif;
+    font-size: 1rem;
+    line-height: 150%;
   }
 }
 

@@ -19,10 +19,10 @@ export default function Home() {
         <h2 className="text-[#2B2B2B] text-[39.06px]">
           Your Glass Codex - where every character is written, piece by piece.
         </h2>
-        <h3 className="text-[#2B2B2B] text-[25px]">
+        <p className="text-[#2B2B2B] text-[25px]">
           Create a character, write their details, build out their story, and
           give them a purpose.
-        </h3>
+        </p>
         <div className="flex gap-8 pt-8">
           <Button
             label="View Features"

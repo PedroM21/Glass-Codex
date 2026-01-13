@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Login } from "@/lib/services/api";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -13,7 +13,8 @@ export default function LoginPage() {
   });
 
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [userToken, setUserToken] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -23,7 +24,6 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
-    setSuccess("");
 
     try {
       const { token, user } = await Login(formData);
@@ -31,14 +31,21 @@ export default function LoginPage() {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      //   setSuccess("Login successful!");
-      router.push("/characters");
+      // set token & trigger redirect
+      setUserToken(token);
+      setSuccess(true);
     } catch (error: any) {
       console.log("Login Failed: ", error);
 
       setError(error.message || "Something went wrong.");
     }
   };
+
+  useEffect(() => {
+    if (success && userToken) {
+      router.push("/dashboard");
+    }
+  }, [success, userToken, router]);
 
   return (
     <main className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 min-h-screen items-center justify-center bg-[#F9F6E5]">
@@ -81,7 +88,6 @@ export default function LoginPage() {
             textColor="text-[#2B2B2B]"
           />
           {error && <p className="text-red-500">{error}</p>}
-          {success && <p className="text-green-500">{success}</p>}
         </form>
       </section>
     </main>
