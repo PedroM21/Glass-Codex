@@ -9,17 +9,22 @@ export default function Footer() {
   const pathname = usePathname();
   const navItems = [
     { href: "/", label: "Home" },
-    { href: "/#1", label: "Section 1" },
-    { href: "/#2", label: "Section 2" },
-    { href: "/#3", label: "Section 3" },
-    { href: "/#4", label: "Section 4" },
+    { href: "/#1", label: "Features" },
+    { href: "/#2", label: "How it works" },
+    { href: "/#3", label: "Who its for" },
   ];
 
   return (
     <footer className="col-span-4 md:col-span-8 lg:col-span-12 bg-[#1b3153]">
-      <div className="max-w-screen md:flex justify-between md:px-16 md:py-8 lg:mx-32 xl:mx-64">
-        <div className="flex flex-col gap-4 px-4 pt-8">
-          <h1 className="text-white text-[20px] font-semibold">Quick Links</h1>
+      <div className="max-w-screen md:flex justify-between md:px-16 md:py-8 lg:mx-32">
+        <div className="text-white text-[39.06px] w-1/4">
+          <h1>Build your character library</h1>
+          <p>
+            Ink & Code helps you organize every character you create in one
+            clean, simple place.
+          </p>
+        </div>
+        <div className="flex flex-col gap-4 w-1/3">
           {navItems.map((item) => (
             <p key={item.href}>
               <Link

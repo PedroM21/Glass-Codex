@@ -5,6 +5,7 @@ import { FetchCharacters } from "@/lib/services/api";
 import CharacterCard from "@/components/ui/CharacterCard";
 import DashboardCharCard from "@/components/ui/DashboardCharCard";
 import Button from "@/components/ui/Button";
+import Link from "next/link";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -59,11 +60,13 @@ export default function DashboardPage() {
           ))}
         </div>
       )}
-      <Button
-        label="View All Characters"
-        color="bg-[#f1cf79]"
-        textColor="text-[#2B2B2B]"
-      />
+      <Link href="/characters">
+        <Button
+          label="View All Characters"
+          color="bg-[#f1cf79]"
+          textColor="text-[#2B2B2B]"
+        />
+      </Link>
     </div>
   );
 }

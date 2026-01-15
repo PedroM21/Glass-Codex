@@ -92,12 +92,14 @@ export default function CharacterCard({
           </motion.div>
         </motion.div>
       </Link>
-      <Button
-        label="Delete"
-        color="bg-[#8C3F3F]"
-        textColor="text-white"
-        onClick={handleDelete}
-      ></Button>
+      <div className="text-center">
+        <Button
+          label="Delete"
+          color="bg-[#8C3F3F]"
+          textColor="text-white"
+          onClick={handleDelete}
+        ></Button>
+      </div>
     </>
   );
 }
