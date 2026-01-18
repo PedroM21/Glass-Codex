@@ -1,36 +1,55 @@
-# Ink & Code — Your Glass Codex
+# Ink & Code — Glass Codex
 
-A character-focused writing tool for game developers, tabletop writes, and storytellers.
+A character-focused writing tool for game developers, tabletop writers, and storytellers.
 
-Live demo: Coming Soon
+**Live demo:** Coming soon
 
-Glass Codez is a v1 writing application designed to help writers build and organize characters in a structured, easy way.
-The initial release focuses on exclusively on character creation and simple management, laying the foundation for future plot and worldbuilding tools.
+---
+
+## Overview
+
+Glass Codex is a v1 writing application designed to help writers build and organize characters in a structured, intuitive way.  
+The initial release focuses exclusively on character creation and management, laying the groundwork for future plot and worldbuilding tools.
+
+---
 
 ## Core Features
 
-- Create and manage characters
+- Create and manage character profiles
 - Rich text editing for character descriptions
-- Image upload for character portrait
+- Image uploads for character portraits
 - Responsive UI with modal-based workflows
-- Authentication and user-specific data
+- Authentication with user-specific data
+
+---
   
 
 ## Tech Stack
+
 - **Frontend:** Next.js (App Router), React, TypeScript
 - **Styling:** Tailwind CSS
-- **Backend:** Node.js / API routes
-- **Databse:** Postgresql -> Neon + Drizzle
-- **Auth:** Jsonwebtoken
+- **Backend:** Node.js (API routes)
+- **Database:** PostgreSQL (Neon) with Drizzle ORM 
+- **Authentication:** JSON Web Tokens (JWT)  
 - **Storage:** Cloudinary
 
+---
 
 ## Project Status
-Currently in v1 which focuses exclusively on character creation. v2 will implement features to allow for plot and worldbuilding creation using rich text editing.
 
+Glass Codex is currently in **v1**, with a deliberate focus on character creation and management.  
+This scoped release establishes the core writing experience before expanding into broader narrative tools.
+
+---
 
 ## Future Updates
 - Plot and story arc tools
 - Lore and worldbuilding modules
 - Cross-character relationships
 - Export and sharing options
+
+---
+
+## Case Study
+
+A detailed breakdown of the design and development process will be available soon:
