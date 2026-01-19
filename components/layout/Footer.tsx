@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Github from "../ui/icons/Github";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -9,17 +10,17 @@ export default function Footer() {
   const pathname = usePathname();
   const navItems = [
     { href: "/", label: "Home" },
-    { href: "/#1", label: "Features" },
-    { href: "/#2", label: "How it works" },
-    { href: "/#3", label: "Who its for" },
+    { href: "/#features", label: "Features" },
+    { href: "/#workflow", label: "How it works" },
+    { href: "/#audience", label: "Who its for" },
   ];
 
   return (
     <footer className="col-span-4 md:col-span-8 lg:col-span-12 bg-[#1b3153]">
       <div className="max-w-screen md:flex justify-between md:px-16 md:py-8 lg:mx-32">
-        <div className="text-white text-[39.06px] w-1/4">
+        <div className="text-white text-[61.04px] w-1/3 flex flex-col gap-4">
           <h1>Build your character library</h1>
-          <p>
+          <p className="text-[20px]">
             Ink & Code helps you organize every character you create in one
             clean, simple place.
           </p>
@@ -40,6 +41,7 @@ export default function Footer() {
               </Link>
             </p>
           ))}
+          <Github />
         </div>
       </div>
       <hr className="border border-[#f1cf79]" />

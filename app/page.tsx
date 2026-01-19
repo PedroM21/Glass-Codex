@@ -10,6 +10,7 @@ import Fill from "@/components/ui/icons/Fill";
 import Pencil from "@/components/ui/icons/Pencil";
 import FeaturesCard from "@/components/ui/FeaturesCard";
 import HeroText from "@/components/animations/HeroText";
+import Audience from "@/components/animations/Audience";
 
 // import CloudinaryUploadWidget from "./cloudinary";
 
@@ -18,6 +19,33 @@ import HeroText from "@/components/animations/HeroText";
 // palette 3: #19192e, #003e91, #002063, #041642
 
 export default function Home() {
+  const audienceData = [
+    {
+      type: "Game developers",
+      description:
+        "Build NPCs and protagonists with the depth your game deserves. Keep every character consistent from concept to release.",
+      image: "/placeholderimage.jpg",
+    },
+    {
+      type: "Tabletop designers",
+      description:
+        "Create memorable characters for your campaings and modules. Reference them instantly when you need them at the table.",
+      image: "/placeholderimage.jpg",
+    },
+    {
+      type: "Design students",
+      description:
+        "Learn how to structure character development properly. Build a portfolio of work that shows your craft.",
+      image: "/placeholderimage.jpg",
+    },
+    {
+      type: "Character writers",
+      description:
+        "Organize your cast across multiple projects. Keep your characters alive and accessible whenever inspiration hits",
+      image: "/placeholderimage.jpg",
+    },
+  ];
+
   return (
     <main className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12">
       {/* Hero Section */}
@@ -32,11 +60,13 @@ export default function Home() {
           />
 
           <div className="flex gap-8 pt-8 justify-center">
-            <Button
-              label="View Features"
-              color="bg-transparent"
-              textColor="text-[#2B2B2B]"
-            />
+            <Link href="/#features">
+              <Button
+                label="View Features"
+                color="bg-transparent"
+                textColor="text-[#2B2B2B]"
+              />
+            </Link>
             <Link href="/register">
               <Button
                 label="Sign Up"
@@ -87,7 +117,10 @@ export default function Home() {
         </div>
       </section>
       {/* Feature Highlights */}
-      <section className="col-span-4 md:col-span-8 lg:col-span-12 bg-[#F9F6E5]">
+      <section
+        id="features"
+        className="col-span-4 md:col-span-8 lg:col-span-12 bg-[#F9F6E5]"
+      >
         <div className="flex flex-col py-16 gap-16">
           <div className="flex flex-col items-center gap-4">
             <p className="text-[20px]">Build</p>
@@ -118,7 +151,10 @@ export default function Home() {
         </div>
       </section>
       {/* How it Works */}
-      <section className="col-span-4 md:col-span-8 lg:col-span-12 bg-[#eff5f6]">
+      <section
+        id="workflow"
+        className="col-span-4 md:col-span-8 lg:col-span-12 bg-[#eff5f6]"
+      >
         <div className="flex w-full justify-center items-center py-16">
           <div className="w-1/2">
             <Image
@@ -177,81 +213,44 @@ export default function Home() {
         </div>
       </section>
       {/* Who It's For */}
-      <section className="col-span-4 md:col-span-8 lg:col-span-12 bg-[#F9F6E5]">
-        <div className="flex w-full justify-center items-center">
-          <div className="w-1/2">
+      <section
+        id="audience"
+        className="col-span-4 md:col-span-8 lg:col-span-12 bg-[#F9F6E5]"
+      >
+        <div className="flex flex-col w-full justify-center items-center py-16 gap-16">
+          <div className="w-1/2 text-center space-y-4">
             <p>Built for</p>
             <h1 className="text-[48.83px] text-[#2B2B2B]">
               Made for the people who create worlds
             </h1>
             <p>
-              Whether you're building your first game or your tenth, Ink & Code
-              works the way you do. No bloat. No confusion. Just what you need
-              to keep your characters straight and your ideas flowing.
+              Whether you're writing your first character or your tenth, Ink &
+              Code works the way you do. No bloat. No confusion. Just what you
+              need to keep your characters straight and your ideas flowing.
             </p>
           </div>
           {/* use motion to add animations and have each one show one at a time */}
-          <div>
-            <Image
-              src="/placeholderimage.jpg"
-              width={300}
-              height={300}
-              alt="Temp"
-            />
-            <h1 className="text-[25px] text-[#2B2B2B]">Game developers</h1>
-            <p>
-              Build NPCs and protagonists with the depth your game deserves.
-              Keep every character consistent from concept to release.
-            </p>
-            <Image
-              src="/placeholderimage.jpg"
-              width={300}
-              height={300}
-              alt="Temp"
-            />
-            <h1 className="text-[25px] text-[#2B2B2B]">Tabletop designers</h1>
-            <p>
-              Create memorable characters for your campaings and modules.
-              Reference them instantly when you need them at the table.
-            </p>
-            <Image
-              src="/placeholderimage.jpg"
-              width={300}
-              height={300}
-              alt="Temp"
-            />
-            <h1 className="text-[25px] text-[#2B2B2B]">Design students</h1>
-            <p>
-              Learn how to structure character development properly. Build a
-              portfolio of work that shows your craft.
-            </p>
-            <Image
-              src="/placeholderimage.jpg"
-              width={300}
-              height={300}
-              alt="Temp"
-            />
-            <h1 className="text-[25px] text-[#2B2B2B]">Character writers</h1>
-            <p>
-              Organize your cast across multiple projects. Keep your characters
-              alive and accessible whenever inspiration hits
-            </p>
-          </div>
+          <Audience audiences={audienceData} />
         </div>
       </section>
       {/* Call to Action */}
-      <section className="col-span-4 md:col-span-8 lg:col-span-12 bg-[#eff5f6]">
-        <div>
-          <h1 className="text-[48.83px] text-[#2B2B2B]">Start building now</h1>
-          <p>Your first character is waiting. Create it today</p>
+      <section className="col-span-4 md:col-span-8 lg:col-span-12 bg-[#E1D7C3]">
+        <div className=" flex flex-col justify-center items-center gap-4 py-8">
+          <h1 className="text-[48.83px]">
+            Write characters that stay together
+          </h1>
+          <p>
+            No more scattered notes or lost ideas, write characters with
+            clarity.
+          </p>
+          <Link href="/register">
+            <Button
+              label="Sign Up"
+              color="bg-[#f1cf79]"
+              textColor="text-[#2B2B2B]"
+            />
+          </Link>
         </div>
-        <Link href="/register">
-          <Button
-            label="Sign Up"
-            color="bg-[#f1cf79]"
-            textColor="text-[#2B2B2B]"
-          />
-        </Link>
       </section>
       {/* Footer */}
       <Footer />
