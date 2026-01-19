@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ink & Code — Glass Codex
 
-## Getting Started
+A character-focused writing tool for game developers, tabletop writers, and storytellers.
 
-First, run the development server:
+**Live demo:** Coming soon
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Overview
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Glass Codex is a v1 writing application designed to help writers build and organize characters in a structured, intuitive way.  
+The initial release focuses exclusively on character creation and management, laying the groundwork for future plot and worldbuilding tools.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Core Features
 
-To learn more about Next.js, take a look at the following resources:
+- Create and manage character profiles
+- Rich text editing for character descriptions
+- Image uploads for character portraits
+- Responsive UI with modal-based workflows
+- Authentication with user-specific data
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
+  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Tech Stack
 
-## Deploy on Vercel
+- **Frontend:** Next.js (App Router), React, TypeScript
+- **Styling:** Tailwind CSS
+- **Backend:** Node.js (API routes)
+- **Database:** PostgreSQL (Neon) with Drizzle ORM 
+- **Authentication:** JSON Web Tokens (JWT)  
+- **Storage:** Cloudinary
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Project Status
+
+Glass Codex is currently in **v1**, with a deliberate focus on character creation and management.  
+This scoped release establishes the core writing experience before expanding into broader narrative tools.
+
+---
+
+## Future Updates
+- Plot and story arc tools
+- Lore and worldbuilding modules
+- Cross-character relationships
+- Export and sharing options
+
+---
+
+## Case Study
+
+A detailed breakdown of the design and development process will be available soon:
