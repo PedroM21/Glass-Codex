@@ -31,6 +31,10 @@ export default function CharactersPage() {
     fetchCharacters();
   }, []);
 
+  const handleCharacterCreated = (newCharacter: any) => {
+    setCharacters((prev) => [...prev, newCharacter]);
+  };
+
   const handleConfirmDelete = async () => {
     if (deleteTargetId === null) return;
 
@@ -49,9 +53,11 @@ export default function CharactersPage() {
   };
 
   return (
-    <>
-      <h1 className="text-[61.04px] text-[#2B2B2B]">All Characters</h1>
-      <div className="flex flex-wrap gap-4">
+    <div className="py-16">
+      <h1 className="text-[61.04px] text-[#2B2B2B] text-center px-8 lg:text-start lg:px-8">
+        All Characters
+      </h1>
+      <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
         {characters.map((character: any) => (
           <div key={character.id}>
             <CharacterCard
@@ -66,7 +72,7 @@ export default function CharactersPage() {
         onConfirm={handleConfirmDelete}
         onCancel={() => setDeleteTargetId(null)}
       />
-      <CharacterModal />
-    </>
+      <CharacterModal onCharacterCreated={handleCharacterCreated} />
+    </div>
   );
 }

@@ -18,14 +18,16 @@ export default function Footer() {
   return (
     <footer className="col-span-4 md:col-span-8 lg:col-span-12 bg-[#1b3153]">
       <div className="max-w-screen md:flex justify-between md:px-16 md:py-8 lg:mx-32">
-        <div className="text-white text-[61.04px] w-1/3 flex flex-col gap-4">
-          <h1>Build your character library</h1>
-          <p className="text-[20px]">
-            Ink & Code helps you organize every character you create in one
+        <div className="text-white w-full px-8 flex flex-col gap-4 mt-8 md:mt-0 md:px-0 md:w-1/3">
+          <h1 className="text-[39.06px] lg:text-[61.04px]">
+            Build your character library
+          </h1>
+          <p className="lg:text-[20px]">
+            Glass Codex helps you organize every character you create in one
             clean, simple place.
           </p>
         </div>
-        <div className="flex flex-col gap-4 w-1/3">
+        <div className="flex flex-col gap-4 px-8 my-8 md:my-0 md:px-0 md:w-1/3">
           {navItems.map((item) => (
             <p key={item.href}>
               <Link

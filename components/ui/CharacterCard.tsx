@@ -4,7 +4,6 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import Image from "next/image";
 import Parchment from "@/public/parchment.png";
-import { DeleteCharacter } from "@/lib/services/api";
 import Button from "./Button";
 
 type Artwork = {
@@ -16,7 +15,7 @@ type Character = {
   id: number;
   name: string;
   role: string;
-  artworks: Artwork[];
+  artworks?: Artwork[];
 };
 
 type CharacterCardProps = {
@@ -60,16 +59,12 @@ export default function CharacterCard({
           }}
           className="p-4 relative m-4 h-90 rounded-lg cursor-pointer"
         >
-          {/* <div className="absolute top-2 left-0 w-4 h-4 border-t-2 border-l-2 border-[#DDe6ed] m-2"></div>
-      <div className="absolute top-2 right-0 w-4 h-4 border-t-2 border-r-2 border-[#DDe6ed] m-2"></div>
-      <div className="absolute bottom-2 left-0 w-4 h-4 border-b-2 border-l-2 border-[#DDe6ed] m-2"></div>
-      <div className="absolute bottom-2 right-0 w-4 h-4 border-b-2 border-r-2 border-[#DDe6ed] m-2"></div> */}
           {/* content */}
           <motion.div className="relative z-10 flex flex-col justify-center h-full gap-2">
             <div className="w-full h-48 relative border-2 border-[#212022] shadow-inner rounded-md overflow-hidden">
-              {character.artworks[0] ? (
+              {character.artworks?.length ? (
                 <Image
-                  src={character.artworks[0].imageURL}
+                  src={character.artworks[0].imageURL ?? ""}
                   alt={character.name}
                   width={150}
                   height={150}

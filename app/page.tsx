@@ -12,16 +12,10 @@ import FeaturesCard from "@/components/ui/FeaturesCard";
 import HeroText from "@/components/animations/HeroText";
 import Audience from "@/components/animations/Audience";
 
-// import CloudinaryUploadWidget from "./cloudinary";
-
-// palette: #DDe6ed, #9Db2bf, #536d82, #26374d
-// palette 2: #d8d7ce, #00a6c0, #283b48, #222831
-// palette 3: #19192e, #003e91, #002063, #041642
-
 export default function Home() {
   const audienceData = [
     {
-      type: "Game developers",
+      type: "Indie game developers",
       description:
         "Build NPCs and protagonists with the depth your game deserves. Keep every character consistent from concept to release.",
       image: "/placeholderimage.jpg",
@@ -50,40 +44,36 @@ export default function Home() {
     <main className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12">
       {/* Hero Section */}
       <section className="col-span-4 md:col-span-8 lg:col-span-12 min-h-screen bg-[#F9F6E5] flex flex-col justify-center items-center gap-4 relative">
-        {/* <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[linear-gradient(#2B2B2B_1px,transparent_1px),linear-gradient(to_right,#2B2B2B_1px,#F9F6E5_1px)] bg-size-[60px_60px]" /> */}
-        <div className="text-center z-1 bg-[#F9F6E5] rounded-full px-8 py-16">
-          <HeroText
-            header="Ink & Code"
-            subheader="Your Glass Codex - where every character is written, piece by piece."
-            tagline="Create a character, write their details, build out their story, and
+        <HeroText
+          header="Ink & Code"
+          subheader="Your Glass Codex - where every character is written, piece by piece."
+          tagline="Create a character, write their details, build out their story, and
             give them a purpose."
-          />
-
-          <div className="flex gap-8 pt-8 justify-center">
-            <Link href="/#features">
-              <Button
-                label="View Features"
-                color="bg-transparent"
-                textColor="text-[#2B2B2B]"
-              />
-            </Link>
-            <Link href="/register">
-              <Button
-                label="Sign Up"
-                color="bg-[#f1cf79]"
-                textColor="text-[#2B2B2B]"
-              />
-            </Link>
-          </div>
+        />
+        <div className="flex gap-8 pt-8 justify-center">
+          <Link href="/#features">
+            <Button
+              label="View Features"
+              color="bg-transparent"
+              textColor="text-[#2B2B2B]"
+            />
+          </Link>
+          <Link href="/register">
+            <Button
+              label="Sign Up"
+              color="bg-[#f1cf79]"
+              textColor="text-[#2B2B2B]"
+            />
+          </Link>
         </div>
       </section>
       {/* Problem -> Solution */}
       <section className="col-span-4 md:col-span-8 lg:col-span-12 bg-[#eff5f6]">
-        <div className="flex w-full py-16">
-          <div className="flex flex-col w-1/2 justify-center items-center gap-16">
-            <div className="w-1/2 space-y-4">
+        <div className="flex flex-col w-full py-16 lg:flex-row">
+          <div className="flex flex-col w-full justify-center items-center gap-16 lg:w-1/2">
+            <div className="w-full space-y-4 lg:w-1/2 px-8 lg:px-0">
               <Sorting />
-              <h1 className="text-[48.83px] text-[#2B2B2B]">
+              <h1 className="text-[31.25px] md:text-[48.83px] text-[#2B2B2B]">
                 Character details scattered everywhere
               </h1>
               <p>
@@ -92,20 +82,20 @@ export default function Home() {
                 ideas get lost in the creative chaos.
               </p>
             </div>
-            <div className="w-1/2 space-y-4">
+            <div className="w-full space-y-4 lg:w-1/2 px-8 lg:px-0">
               <PlayArrow />
-              <h1 className="text-[48.83px] text-[#2B2B2B]">
+              <h1 className="text-[31.25px] md:text-[48.83px] text-[#2B2B2B]">
                 Everything in one place, always
               </h1>
               <p>
-                Ink & Code brings order to the chaos. Create characters with
+                Glass Codex brings order to the chaos. Create characters with
                 structured fields for name, role, traits, and flaws. View all
                 your characters at once. Update details whenever inspiration
                 strikes. Delete what doesn't work. Simple. Clear. Effective.
               </p>
             </div>
           </div>
-          <div className="flex w-1/2 justify-center items-center">
+          <div className="flex w-full justify-center items-center px-8 mt-8 lg:px-0 lg:mt-0 lg:w-1/2">
             <Image
               src="/Solution.png"
               width={700}
@@ -122,16 +112,16 @@ export default function Home() {
         className="col-span-4 md:col-span-8 lg:col-span-12 bg-[#F9F6E5]"
       >
         <div className="flex flex-col py-16 gap-16">
-          <div className="flex flex-col items-center gap-4">
-            <p className="text-[20px]">Build</p>
-            <h1 className="text-[48.83px] text-[#2B2B2B]">
+          <div className="flex flex-col text-center items-center gap-4 px-8 lg:px-0">
+            <p className="md:text-[20px]">Build</p>
+            <h1 className="text-[31.25px] md:text-[48.83px] text-[#2B2B2B]">
               Create characters with structure
             </h1>
-            <p className="text-[20px]">
+            <p className="md:text-[20px]">
               Start fresh with organized fields for every detail
             </p>
           </div>
-          <div className="flex justify-center gap-8">
+          <div className="flex flex-col justify-center gap-8 mx-auto md:flex-row md:flex-wrap">
             <FeaturesCard
               header="See all characters at once"
               text="View your entire roster in a single, clear interface"
@@ -140,12 +130,12 @@ export default function Home() {
             <FeaturesCard
               header="Edit and update character details"
               text="Update traits, flaws, and roles whenever you need to"
-              image="/Feature2.png"
+              image="/Feature2-v2.png"
             />
             <FeaturesCard
               header="Refine"
               text="Delete entries and keep only what matters most"
-              image="/Feature3.png"
+              image="/Feature3-v3.png"
             />
           </div>
         </div>
@@ -155,8 +145,8 @@ export default function Home() {
         id="workflow"
         className="col-span-4 md:col-span-8 lg:col-span-12 bg-[#eff5f6]"
       >
-        <div className="flex w-full justify-center items-center py-16">
-          <div className="w-1/2">
+        <div className="flex flex-col w-full justify-center items-center py-16 gap-8 lg:gap-0 lg:flex-row">
+          <div className="w-full px-8 lg:px-0 md:w-2/3 lg:w-1/2">
             <Image
               src="/Workflow.png"
               width={600}
@@ -165,40 +155,40 @@ export default function Home() {
               className="mx-auto"
             />
           </div>
-          <div className="flex flex-wrap w-1/2 gap-8">
-            <div className="flex flex-col gap-4">
+          <div className="flex flex-wrap w-full px-8 gap-8 lg:w-1/2 lg:px-0">
+            <div className="flex flex-col gap-4 mx-auto">
               <Start />
               <h1 className="text-[25px] text-[#2B2B2B] font-semibold">
                 Start Here
               </h1>
-              <p className="w-3/4">
-                Log into Ink & Code and begin building your first character
+              <p className="w-full lg:w-3/4">
+                Log into Glass Codex and begin building your first character
               </p>
             </div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 mx-auto">
               <Fill />
               <h1 className="text-[25px] text-[#2B2B2B] font-semibold">
                 Fill it in
               </h1>
-              <p className="w-3/4">
+              <p className="w-full lg:w-3/4">
                 Add name, role, traits, flaws, and everything else that matters
               </p>
             </div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 mx-auto">
               <Save />
               <h1 className="text-[25px] text-[#2B2B2B] font-semibold">
                 Save it
               </h1>
-              <p className="w-3/4">
+              <p className="w-full lg:w-3/4">
                 Your character is stored and ready to view anytime you want
               </p>
             </div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 mx-auto">
               <Pencil />
               <h1 className="text-[25px] text-[#2B2B2B] font-semibold">
                 Manage all
               </h1>
-              <p className="w-3/4">
+              <p className="w-full lg:w-3/4">
                 Edit, update, or delete characters as your designs evolve
               </p>
               <Link href="/login">
@@ -218,14 +208,14 @@ export default function Home() {
         className="col-span-4 md:col-span-8 lg:col-span-12 bg-[#F9F6E5]"
       >
         <div className="flex flex-col w-full justify-center items-center py-16 gap-16">
-          <div className="w-1/2 text-center space-y-4">
+          <div className="w-full text-center space-y-4 px-8 lg:w-1/2">
             <p>Built for</p>
-            <h1 className="text-[48.83px] text-[#2B2B2B]">
+            <h1 className="text-[31.25px] md:text-[48.83px] text-[#2B2B2B]">
               Made for the people who create worlds
             </h1>
             <p>
-              Whether you're writing your first character or your tenth, Ink &
-              Code works the way you do. No bloat. No confusion. Just what you
+              Whether you're writing your first character or your tenth, Glass
+              Codex works the way you do. No bloat. No confusion. Just what you
               need to keep your characters straight and your ideas flowing.
             </p>
           </div>
@@ -235,8 +225,8 @@ export default function Home() {
       </section>
       {/* Call to Action */}
       <section className="col-span-4 md:col-span-8 lg:col-span-12 bg-[#E1D7C3]">
-        <div className=" flex flex-col justify-center items-center gap-4 py-8">
-          <h1 className="text-[48.83px]">
+        <div className=" flex flex-col justify-center items-center gap-4 py-8 text-center px-8 md:text-start md:px-0">
+          <h1 className="text-[31.25px] md:text-[48.83px]">
             Write characters that stay together
           </h1>
           <p>

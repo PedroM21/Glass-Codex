@@ -8,7 +8,11 @@ import { useRouter } from "next/navigation";
 import { easeIn, motion } from "motion/react";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
-export default function CharacterModal() {
+export default function CharacterModal({
+  onCharacterCreated,
+}: {
+  onCharacterCreated: (character: any) => void;
+}) {
   const [imageUrl, setImageUrl] = useState("");
   const [imagePublicId, setImagePublicId] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -53,6 +57,7 @@ export default function CharacterModal() {
         throw new Error("No auth token found");
       }
       const data = await CreateCharacter(payload, token);
+      onCharacterCreated(data.character);
       setIsOpen(false);
     } catch (error) {
       console.log("Failed to create character: ", error);
@@ -61,12 +66,14 @@ export default function CharacterModal() {
 
   return (
     <div>
-      <Button
-        label="Create Character"
-        color="bg-[#f1cf79]"
-        textColor="text-[#2B2B2B]"
-        onClick={handleOpen}
-      />
+      <div className="text-center xl:text-start">
+        <Button
+          label="Create Character"
+          color="bg-[#f1cf79]"
+          textColor="text-[#2B2B2B]"
+          onClick={handleOpen}
+        />
+      </div>
       {isOpen && (
         <motion.div className="bg-black/60 h-screen absolute w-full top-0 left-0 z-15">
           <motion.div

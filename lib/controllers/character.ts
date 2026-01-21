@@ -28,7 +28,7 @@ export const getCharacters = async (req: Request) => {
           ...char,
           artworks,
         };
-      })
+      }),
     );
 
     return NextResponse.json(
@@ -37,13 +37,13 @@ export const getCharacters = async (req: Request) => {
         message: "Characters fetched successfully",
         data: { characters: charactersWithArtworks },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
       { message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };
@@ -51,7 +51,7 @@ export const getCharacters = async (req: Request) => {
 // Get specific character
 export const getSpecificCharacter = async (
   req: Request,
-  context: { params: any }
+  context: { params: any },
 ) => {
   try {
     const { params } = context;
@@ -62,7 +62,7 @@ export const getSpecificCharacter = async (
     if (isNaN(characterId)) {
       return NextResponse.json(
         { message: "Invalid character ID" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -76,15 +76,15 @@ export const getSpecificCharacter = async (
       .where(
         and(
           eq(charactersTable.id, characterId),
-          eq(charactersTable.userId, user.id)
-        )
+          eq(charactersTable.userId, user.id),
+        ),
       )
       .limit(1);
 
     if (!character.length) {
       return NextResponse.json(
         { message: "Character not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -104,13 +104,13 @@ export const getSpecificCharacter = async (
           },
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
       { message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };
@@ -123,7 +123,7 @@ export const createCharacter = async (req: Request) => {
     if (!name) {
       return NextResponse.json(
         { success: false, message: "Name is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -140,7 +140,13 @@ export const createCharacter = async (req: Request) => {
         flaws,
         userId: user.id,
       })
-      .returning({ id: charactersTable.id, name: charactersTable.name });
+      .returning({
+        id: charactersTable.id,
+        name: charactersTable.name,
+        role: charactersTable.role,
+        traits: charactersTable.traits,
+        flaws: charactersTable.flaws,
+      });
 
     // add image url to artworks table
     let newArtwork = null;
@@ -158,9 +164,17 @@ export const createCharacter = async (req: Request) => {
       {
         success: true,
         message: "Character created successfully",
-        data: { character: newCharacter, artwork: newArtwork },
+        data: {
+          character: {
+            ...newCharacter,
+            role,
+            traits,
+            flaws,
+            artworks: newArtwork ? [newArtwork] : [],
+          },
+        },
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("Create character error: ", error);
@@ -169,7 +183,7 @@ export const createCharacter = async (req: Request) => {
         success: false,
         message: "Failed to create character",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };
@@ -177,7 +191,7 @@ export const createCharacter = async (req: Request) => {
 // Update character details
 export const updateCharacter = async (
   req: Request,
-  context: { params: { id: string } }
+  context: { params: { id: string } },
 ) => {
   try {
     const { params } = context;
@@ -188,7 +202,7 @@ export const updateCharacter = async (
     if (isNaN(characterId)) {
       return NextResponse.json(
         { message: "Invalid character ID" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -212,7 +226,7 @@ export const updateCharacter = async (
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
         { message: "No fields to update" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -223,15 +237,15 @@ export const updateCharacter = async (
       .where(
         and(
           eq(charactersTable.id, characterId),
-          eq(charactersTable.userId, user.id)
-        )
+          eq(charactersTable.userId, user.id),
+        ),
       )
       .returning();
 
     if (!updatedCharacter) {
       return NextResponse.json(
         { message: "Character not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -252,13 +266,13 @@ export const updateCharacter = async (
           },
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Update character error: ", error);
     return NextResponse.json(
       { message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };
@@ -266,7 +280,7 @@ export const updateCharacter = async (
 // Delete a character
 export const deleteCharacter = async (
   req: Request,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> },
 ) => {
   try {
     const { id } = await context.params;
@@ -275,7 +289,7 @@ export const deleteCharacter = async (
     if (Number.isNaN(numericId)) {
       return NextResponse.json(
         { success: false, message: "Invalid character id." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -285,7 +299,7 @@ export const deleteCharacter = async (
     const result = await db
       .delete(charactersTable)
       .where(
-        and(eq(charactersTable.id, id), eq(charactersTable.userId, user.id))
+        and(eq(charactersTable.id, id), eq(charactersTable.userId, user.id)),
       )
       .returning({ id: charactersTable.id });
 
@@ -295,7 +309,7 @@ export const deleteCharacter = async (
           success: false,
           message: "Character not found or unauthorized",
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -310,7 +324,7 @@ export const deleteCharacter = async (
         success: false,
         message: "Failed to delete character",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };

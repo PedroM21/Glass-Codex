@@ -77,10 +77,12 @@ export default function CharacterPage() {
   console.log(character);
 
   return (
-    <div>
-      <h1 className="text-[64px]">{character.name}</h1>
-      <div className="flex pt-8 justify-between">
-        <form className="flex flex-col w-1/3 gap-2">
+    <div className="mb-16">
+      <h1 className="text-[64px] text-center pt-16 md:text-start md:px-32 xl:px-0">
+        {character.name}
+      </h1>
+      <div className="flex flex-col pt-8 justify-center gap-4 md:flex-row lg:justify-between">
+        <form className="flex flex-col w-full gap-2 mx-auto px-8 md:w-1/3 xl:mx-0">
           <div className="flex gap-4 justify-between w-full border-b">
             <span className="font-semibold">Name</span>
             <input
@@ -119,6 +121,7 @@ export default function CharacterPage() {
                 });
                 setIsDirty(true);
               }}
+              className="border px-2 py-1 rounded"
             />
           </div>
           <div className="flex gap-4 justify-between w-full border-b">
@@ -137,6 +140,7 @@ export default function CharacterPage() {
                 });
                 setIsDirty(true);
               }}
+              className="border px-2 py-1 rounded"
             />
           </div>
           <Button
@@ -163,13 +167,13 @@ export default function CharacterPage() {
                     narrative: draft.narrative,
                     purpose: draft.purpose,
                   },
-                  token
+                  token,
                 );
 
                 // refetch full character
                 const response = await FetchSpecificCharacter(
                   token,
-                  character.id.toString()
+                  character.id.toString(),
                 );
                 setCharacter(response.character);
                 setDraft(response.character);
@@ -183,7 +187,7 @@ export default function CharacterPage() {
             }}
           />
         </form>
-        <div>
+        <div className="mx-auto mb-4">
           <Image
             src={character.artworks[0].imageURL}
             alt={character.name}
@@ -193,8 +197,8 @@ export default function CharacterPage() {
           />
         </div>
       </div>
-      <div className="flex gap-16">
-        <div className="w-1/2">
+      <div className="flex flex-col gap-16 lg:flex-row">
+        <div className="w-full px-8 lg:w-1/3 lg:px-0">
           <h1 className="px-3">Narrative</h1>
           <TipTap
             content={draft.narrative ?? { type: "doc", content: [] }}
@@ -215,11 +219,11 @@ export default function CharacterPage() {
                 await UpdateCharacter(
                   character.id,
                   { narrative: draft.narrative },
-                  token!
+                  token!,
                 );
                 const response = await FetchSpecificCharacter(
                   token!,
-                  character.id.toString()
+                  character.id.toString(),
                 );
                 setCharacter(response.character);
                 setDraft(response.character);
@@ -232,7 +236,7 @@ export default function CharacterPage() {
             }}
           />
         </div>
-        <div className="w-1/2">
+        <div className="w-full px-8 lg:w-1/3 lg:px-0">
           <h1 className="px-3">Purpose</h1>
           <TipTap
             content={draft.purpose ?? { type: "doc", content: [] }}
@@ -253,11 +257,11 @@ export default function CharacterPage() {
                 await UpdateCharacter(
                   character.id,
                   { purpose: draft.purpose },
-                  token!
+                  token!,
                 );
                 const response = await FetchSpecificCharacter(
                   token!,
-                  character.id.toString()
+                  character.id.toString(),
                 );
                 setCharacter(response.character);
                 setDraft(response.character);

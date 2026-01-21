@@ -14,7 +14,10 @@ export default function Audience({ audiences }: AudienceProps) {
   return (
     <div className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 space-y-8">
       {audiences.map((audience) => (
-        <div key={audience.type} className="lg:col-span-6 flex flex-col gap-4">
+        <div
+          key={audience.type}
+          className="col-span-4 lg:col-span-6 flex flex-col gap-4 px-8 lg:px-0"
+        >
           <Image
             src={audience.image}
             width={300}
@@ -25,7 +28,7 @@ export default function Audience({ audiences }: AudienceProps) {
           <h1 className="text-[25px] text-[#2B2B2B] font-semibold text-center">
             {audience.type}
           </h1>
-          <p className="text-center w-1/2 mx-auto">{audience.description}</p>
+          <p className="mx-auto w-full lg:w-1/2">{audience.description}</p>
         </div>
       ))}
     </div>

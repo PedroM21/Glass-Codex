@@ -1,13 +1,12 @@
-// palette: #DDe6ed, #9Db2bf, #536d82, #26374d
-// palette 2: #d8d7ce, #00a6c0, #283b48, #222831
-// palette 3: #19192e, #003e91, #002063, #041642
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Register } from "@/lib/services/api";
 import Button from "@/components/ui/Button";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -15,7 +14,8 @@ export default function RegisterPage() {
   });
 
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [userToken, setUserToken] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -25,19 +25,27 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
-    setSuccess("");
 
     try {
       const { token, user } = await Register(formData);
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
-      setSuccess("Registration successful!");
+
+      // set token & trigger redirect
+      setUserToken(token);
+      setSuccess(true);
     } catch (error: any) {
       console.log("Registering failed: ", error);
 
       setError(error.message || "Something went wrong.");
     }
   };
+
+  useEffect(() => {
+    if (success && userToken) {
+      router.push("/dashboard");
+    }
+  }, [success, userToken, router]);
 
   return (
     <main className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 min-h-screen items-center justify-center bg-[#F9F6E5]">
