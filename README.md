@@ -1,6 +1,6 @@
 # Ink & Code — Glass Codex
 
-A character-focused writing tool for game developers, tabletop writers, and storytellers.
+A character-focused writing tool for indie game developers, tabletop writers, and storytellers.
 
 **Live demo:** Coming soon
 
@@ -28,7 +28,7 @@ The initial release focuses exclusively on character creation and management, la
 
 - **Frontend:** Next.js (App Router), React, TypeScript
 - **Styling:** Tailwind CSS
-- **Backend:** Node.js (API routes)
+- **Backend:** Next.js (API routes)
 - **Database:** PostgreSQL (Neon) with Drizzle ORM 
 - **Authentication:** JSON Web Tokens (JWT)  
 - **Storage:** Cloudinary
@@ -52,4 +52,4 @@ This scoped release establishes the core writing experience before expanding int
 
 ## Case Study
 
-A detailed breakdown of the design and development process will be available soon:
+A detailed breakdown of the design and development process can be found here: https://pmorenodev.vercel.app/casestudies/glass-codex
