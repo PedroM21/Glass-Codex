@@ -18,25 +18,25 @@ export default function Home() {
       type: "Indie game developers",
       description:
         "Build NPCs and protagonists with the depth your game deserves. Keep every character consistent from concept to release.",
-      image: "/placeholderimage.jpg",
-    },
-    {
-      type: "Tabletop designers",
-      description:
-        "Create memorable characters for your campaings and modules. Reference them instantly when you need them at the table.",
-      image: "/placeholderimage.jpg",
-    },
-    {
-      type: "Design students",
-      description:
-        "Learn how to structure character development properly. Build a portfolio of work that shows your craft.",
-      image: "/placeholderimage.jpg",
+      image: "/indiegamedev.png",
     },
     {
       type: "Character writers",
       description:
         "Organize your cast across multiple projects. Keep your characters alive and accessible whenever inspiration hits",
-      image: "/placeholderimage.jpg",
+      image: "/characterwriters-v4.png",
+    },
+    {
+      type: "Tabletop designers",
+      description:
+        "Create memorable characters for your campaings and modules. Reference them instantly when you need them at the table.",
+      image: "/ttrpg.png",
+    },
+    {
+      type: "Design students",
+      description:
+        "Learn how to structure character development properly. Build a portfolio of work that shows your craft.",
+      image: "/designstudents.jpg",
     },
   ];
 
@@ -125,7 +125,7 @@ export default function Home() {
             <FeaturesCard
               header="See all characters at once"
               text="View your entire roster in a single, clear interface"
-              image="/Feature1.png"
+              image="/Feature1-v2.png"
             />
             <FeaturesCard
               header="Edit and update character details"
