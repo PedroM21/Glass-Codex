@@ -5,9 +5,10 @@ import {
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  return getSpecificCharacter(req, params.id);
+  const { id } = await params;
+  return getSpecificCharacter(req, id);
 }
 
 export async function PATCH(

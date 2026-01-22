@@ -43,7 +43,7 @@ export const register = async (req: Request) => {
         message: "User registered successfully",
         data: { token, user: newUser },
       }),
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error(error);
@@ -80,7 +80,7 @@ export const login = async (req: Request) => {
         message: "Login successful",
         data: { token, user: { id: user.id, username: user.username } },
       }),
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error(error);
@@ -88,7 +88,7 @@ export const login = async (req: Request) => {
       JSON.stringify({
         message: (error as Error).message || "Internal server error",
       }),
-      { status: 500 }
+      { status: 500 },
     );
   }
 };
@@ -123,40 +123,3 @@ export const authCheck = async (req: Request) => {
     throw new Error("Authentication failed");
   }
 };
-
-// export const authCheck = async (req: Request) => {
-//   console.log("---- AUTH CHECK START ----");
-
-//   const authHeader = req.headers.get("authorization");
-//   console.log("Authorization header:", authHeader);
-
-//   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-//     throw new Error("No token provided");
-//   }
-
-//   const token = authHeader.split(" ")[1];
-//   console.log("Extracted token:", token);
-
-//   let decoded: { id: number };
-//   try {
-//     decoded = jwt.verify(token, JWT_SECRET) as { id: number };
-//     console.log("Decoded token:", decoded);
-//   } catch (err) {
-//     console.error("JWT verify failed:", err);
-//     throw new Error("Invalid or expired token");
-//   }
-
-//   const [user] = await db
-//     .select({ id: usersTable.id, username: usersTable.username })
-//     .from(usersTable)
-//     .where(eq(usersTable.id, decoded.id));
-
-//   console.log("DB user lookup result:", user);
-
-//   if (!user) {
-//     throw new Error("User not found");
-//   }
-
-//   console.log("---- AUTH CHECK SUCCESS ----");
-//   return user;
-// };
