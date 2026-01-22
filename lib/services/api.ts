@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://glass-codex.vercel.app";
 
 export const Register = async (formData: {
   username: string;
@@ -123,7 +123,7 @@ export const CreateCharacter = async (
     flaws: string[];
     imageURL: string;
   },
-  token: string
+  token: string,
 ) => {
   try {
     const response = await fetch(`${BASE_URL}/api/character/create`, {
@@ -156,7 +156,7 @@ export const UpdateCharacter = async (
     narrative: any;
     purpose: any;
   }>,
-  token: string
+  token: string,
 ) => {
   const response = await fetch(`${BASE_URL}/api/character/${id}`, {
     method: "PATCH",
