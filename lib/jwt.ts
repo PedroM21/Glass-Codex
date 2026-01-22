@@ -10,6 +10,6 @@ export const generateToken = (user: { id: number; username: string }) => {
       username: user.username,
     },
     JWT_SECRET,
-    { expiresIn: 60 * 60 * 4 } // 4 hours in seconds
+    { expiresIn: 60 * 60 * 4 },
   );
 };

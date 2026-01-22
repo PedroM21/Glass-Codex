@@ -299,7 +299,10 @@ export const deleteCharacter = async (
     const result = await db
       .delete(charactersTable)
       .where(
-        and(eq(charactersTable.id, id), eq(charactersTable.userId, user.id)),
+        and(
+          eq(charactersTable.id, numericId),
+          eq(charactersTable.userId, user.id),
+        ),
       )
       .returning({ id: charactersTable.id });
 
