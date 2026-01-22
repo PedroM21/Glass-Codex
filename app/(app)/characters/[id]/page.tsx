@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type Artwork = {
-  id: string;
+  id: number;
   imageURL: string;
 };
 
@@ -188,13 +188,18 @@ export default function CharacterPage() {
           />
         </form>
         <div className="mx-auto mb-4">
-          <Image
-            src={character.artworks[0].imageURL}
-            alt={character.name}
-            loading="eager"
-            width={250}
-            height={250}
-          />
+          {character.artworks.length > 0 ? (
+            <Image
+              src={character.artworks[0].imageURL}
+              alt={character.name}
+              width={250}
+              height={250}
+            />
+          ) : (
+            <div className="w-62 h-62 flex items-center justify-center border">
+              No image
+            </div>
+          )}
         </div>
       </div>
       <div className="flex flex-col gap-16 lg:flex-row">

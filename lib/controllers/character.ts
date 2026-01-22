@@ -49,12 +49,9 @@ export const getCharacters = async (req: Request) => {
 };
 
 // Get specific character
-export const getSpecificCharacter = async (
-  req: Request,
-  { params }: { params: { id: string } },
-) => {
+export const getSpecificCharacter = async (req: Request, id: string) => {
   try {
-    const characterId = Number(params.id);
+    const characterId = Number(id);
 
     if (isNaN(characterId)) {
       return NextResponse.json(
@@ -186,12 +183,9 @@ export const createCharacter = async (req: Request) => {
 };
 
 // Update character details
-export const updateCharacter = async (
-  req: Request,
-  { params }: { params: { id: string } },
-) => {
+export const updateCharacter = async (req: Request, id: string) => {
   try {
-    const characterId = Number(params.id);
+    const characterId = Number(id);
 
     if (isNaN(characterId)) {
       return NextResponse.json(
