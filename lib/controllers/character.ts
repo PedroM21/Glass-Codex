@@ -268,10 +268,11 @@ export const updateCharacter = async (req: Request, id: string) => {
 // Delete a character
 export const deleteCharacter = async (
   req: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) => {
   try {
-    const numericId = Number(params.id);
+    const { id } = await params;
+    const numericId = Number(id);
 
     if (Number.isNaN(numericId)) {
       return NextResponse.json(
