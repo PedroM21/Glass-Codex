@@ -51,13 +51,10 @@ export const getCharacters = async (req: Request) => {
 // Get specific character
 export const getSpecificCharacter = async (
   req: Request,
-  context: { params: any },
+  { params }: { params: { id: string } },
 ) => {
   try {
-    const { params } = context;
-
-    const unwrappedParams = await params;
-    const characterId = Number(unwrappedParams.id);
+    const characterId = Number(params.id);
 
     if (isNaN(characterId)) {
       return NextResponse.json(
@@ -191,13 +188,10 @@ export const createCharacter = async (req: Request) => {
 // Update character details
 export const updateCharacter = async (
   req: Request,
-  context: { params: { id: string } },
+  { params }: { params: { id: string } },
 ) => {
   try {
-    const { params } = context;
-
-    const unwrappedParams = await params;
-    const characterId = Number(unwrappedParams.id);
+    const characterId = Number(params.id);
 
     if (isNaN(characterId)) {
       return NextResponse.json(
