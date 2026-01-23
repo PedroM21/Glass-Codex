@@ -2,7 +2,7 @@
 
 A character-focused writing tool for indie game developers, tabletop writers, and storytellers.
 
-**Live demo:** Coming soon
+**Live demo:** https://glass-codex.vercel.app
 
 ---
 
