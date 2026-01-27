@@ -61,13 +61,13 @@ export default function CharacterCard({
         >
           {/* content */}
           <motion.div className="relative z-10 flex flex-col justify-center h-full gap-2">
-            <div className="w-full h-48 relative border-2 border-[#212022] shadow-inner rounded-md overflow-hidden">
+            <div className="relative w-full aspect-3/4 overflow-hidden rounded-md bg-[#f5f1e6] border border-[#212022]">
               {character.artworks?.length ? (
                 <Image
                   src={character.artworks[0].imageURL ?? ""}
                   alt={character.name}
-                  width={150}
-                  height={150}
+                  fill
+                  className="object-contain"
                 />
               ) : (
                 <div className="flex justify-center items-center h-full w-full">

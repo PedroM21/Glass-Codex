@@ -1,15 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import DashboardIcon from "../ui/icons/Dashboard";
 import CharacterIcon from "../ui/icons/Character";
 import LoreIcon from "../ui/icons/Lore";
 import Plot from "../ui/icons/Plot";
-import { usePathname } from "next/navigation";
+import Expand from "../ui/icons/Expand";
 
 export default function Sidebar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [expandSidebar, setExpandSidebar] = useState(false);
   const pathname = usePathname();
 
   const navItems = [
@@ -53,54 +55,50 @@ export default function Sidebar() {
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 z-40 min-h-screen w-64 bg-[#1b3153] text-white
+          fixed top-0 left-0 z-40 min-h-screen bg-[#1b3153] text-center
           transform transition-transform duration-300 ease-in-out
+          ${expandSidebar ? "w-48" : "w-24"}
           ${menuOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0 lg:static
         `}
       >
-        <div className="p-6 space-y-10">
-          <h1 className="text-2xl font-semibold">Glass Codex</h1>
+        <button
+          onClick={() => setExpandSidebar((prev) => !prev)}
+          aria-label="Toggle sidebar"
+          className="cursor-pointer my-8"
+        >
+          <Expand />
+        </button>
 
-          <ul className="space-y-6 text-lg">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
+        <ul className="flex  flex-col justify-center items-center gap-6">
+          {navItems.map((item) => {
+            const isActive =
+              pathname === item.href || pathname.startsWith(`${item.href}/`);
 
-              if (item.disabled) {
-                return (
-                  <li
-                    key={item.label}
-                    className="opacity-50 cursor-not-allowed"
-                  >
-                    <div className="flex gap-2">
-                      {item.icon}
-                      {item.label}
-                    </div>
-                  </li>
-                );
-              }
-
-              return (
-                <li key={item.href}>
+            return (
+              <li key={item.href} className="w-full flex justify-center">
+                {item.disabled ? (
+                  <div className="flex items-center gap-3 text-white opacity-50 cursor-not-allowed">
+                    {item.icon}
+                    {expandSidebar && <span>{item.label}</span>}
+                  </div>
+                ) : (
                   <Link
                     href={item.href}
                     onClick={() => setMenuOpen(false)}
-                    className={`block transition ${
-                      isActive
-                        ? "font-semibold underline underline-offset-4"
-                        : "hover:underline underline-offset-4"
-                    }`}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`flex items-center gap-3 text-white transition
+                    ${isActive ? "font-semibold underline underline-offset-4" : "hover:underline"}
+                    `}
                   >
-                    <div className="flex gap-2">
-                      {item.icon}
-                      {item.label}
-                    </div>
+                    {item.icon}
+                    {expandSidebar && <span>{item.label}</span>}
                   </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
       </aside>
     </>
   );

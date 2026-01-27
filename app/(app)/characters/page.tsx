@@ -54,10 +54,14 @@ export default function CharactersPage() {
 
   return (
     <div className="py-16">
-      <h1 className="text-[61.04px] text-[#2B2B2B] text-center px-8 lg:text-start lg:px-8">
-        All Characters
-      </h1>
-      <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
+      <div className="flex flex-col px-8 lg:text-start lg:flex-row lg:justify-between ">
+        <h1 className="text-[61.04px] text-[#2B2B2B] text-center">
+          All Characters
+        </h1>
+        <CharacterModal onCharacterCreated={handleCharacterCreated} />
+      </div>
+
+      <div className="grid gap-4 justify-center grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {characters.map((character: any) => (
           <div key={character.id}>
             <CharacterCard
@@ -72,7 +76,6 @@ export default function CharactersPage() {
         onConfirm={handleConfirmDelete}
         onCancel={() => setDeleteTargetId(null)}
       />
-      <CharacterModal onCharacterCreated={handleCharacterCreated} />
     </div>
   );
 }

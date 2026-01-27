@@ -77,36 +77,58 @@ export default function CharacterPage() {
   console.log(character);
 
   return (
-    <div className="mb-16">
-      <h1 className="text-[64px] text-center pt-16 md:text-start md:px-32 xl:px-0">
+    <div className="min-h-screen">
+      <h1 className="text-[64px] text-center pt-16 px-8 md:text-start">
         {character.name}
       </h1>
       <div className="flex flex-col pt-8 justify-center gap-4 md:flex-row lg:justify-between">
-        <form className="flex flex-col w-full gap-2 mx-auto px-8 md:w-1/3 xl:mx-0">
-          <div className="flex gap-4 justify-between w-full border-b">
-            <span className="font-semibold">Name</span>
-            <input
-              value={draft.name}
-              onChange={(e) => {
-                setDraft({ ...draft, name: e.target.value });
-                setIsDirty(true);
-              }}
-              className="border px-2 py-1 rounded"
-            />
+        <form className="flex flex-col w-full gap-2 mx-auto px-4 xl:mx-0">
+          {/* name / role */}
+          <div className="flex w-full">
+            <div className="flex flex-col w-full justify-end gap-2">
+              <div className="flex flex-col gap-2 bg-[#1B3153] border-2 border-[#F1CF79] text-white p-2 rounded-xl w-2/3">
+                <span className="font-semibold px-2">Name</span>
+                <input
+                  value={draft.name}
+                  onChange={(e) => {
+                    setDraft({ ...draft, name: e.target.value });
+                    setIsDirty(true);
+                  }}
+                  className="border px-2 py-1 rounded-xl bg-white text-[#2B2B2B]"
+                />
+              </div>
+              <div className="flex flex-col gap-2 bg-[#1B3153] border-2 border-[#F1CF79] text-white p-2 rounded-xl w-2/3">
+                <span className="font-semibold px-2">Role</span>
+                <input
+                  value={draft?.role}
+                  onChange={(e) => {
+                    setDraft({ ...draft, role: e.target.value });
+                    setIsDirty(true);
+                  }}
+                  className="border px-2 py-1 rounded-xl bg-white text-[#2B2B2B]"
+                />
+              </div>
+            </div>
+            {/* Image of character */}
+            <div className="hidden md:flex w-64 justify-center items-center">
+              {character.artworks.length > 0 ? (
+                <div className="relative w-64 aspect-square rounded-md overflow-hidden">
+                  <Image
+                    src={character.artworks[0].imageURL}
+                    alt={character.name}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              ) : (
+                <div className="w-64 aspect-square flex items-center justify-center rounded-md text-gray-500">
+                  No image
+                </div>
+              )}
+            </div>
           </div>
-          <div className="flex gap-4 justify-between w-full border-b">
-            <span className="font-semibold">Role</span>
-            <input
-              value={draft?.role}
-              onChange={(e) => {
-                setDraft({ ...draft, role: e.target.value });
-                setIsDirty(true);
-              }}
-              className="border px-2 py-1 rounded"
-            />
-          </div>
-          <div className="flex gap-4 justify-between w-full border-b">
-            <span className="font-semibold text-right">Traits</span>
+          <div className="flex flex-col gap-2 bg-[#1B3153] border-2 border-[#F1CF79] text-white p-2 rounded-xl">
+            <span className="font-semibold px-2">Traits</span>
             <input
               value={traitsInput}
               onChange={(e) => setTraitsInput(e.target.value)}
@@ -121,11 +143,11 @@ export default function CharacterPage() {
                 });
                 setIsDirty(true);
               }}
-              className="border px-2 py-1 rounded"
+              className="border px-2 py-1 rounded-xl bg-white text-[#2B2B2B]"
             />
           </div>
-          <div className="flex gap-4 justify-between w-full border-b">
-            <span className="font-semibold">Flaws</span>
+          <div className="flex flex-col gap-2 bg-[#1B3153] border-2 border-[#F1CF79] text-white p-2 rounded-xl">
+            <span className="font-semibold px-2">Flaws</span>
             <input
               value={flawsInput}
               onChange={(e) => setFlawsInput(e.target.value)}
@@ -140,71 +162,59 @@ export default function CharacterPage() {
                 });
                 setIsDirty(true);
               }}
-              className="border px-2 py-1 rounded"
+              className="border px-2 py-1 rounded-xl bg-white text-[#2B2B2B]"
             />
           </div>
-          <Button
-            label={isSaving ? "Saving..." : "Save Changes"}
-            color="bg-[#f1cf79]"
-            textColor="text-[#2B2B2B]"
-            disabled={!isDirty || isSaving}
-            onClick={async () => {
-              if (!draft || !character) return;
+          <div>
+            <Button
+              label={isSaving ? "Saving..." : "Save Changes"}
+              color="bg-[#f1cf79]"
+              textColor="text-[#2B2B2B]"
+              disabled={!isDirty || isSaving}
+              onClick={async () => {
+                if (!draft || !character) return;
 
-              try {
-                setIsSaving(true);
-                const token = localStorage.getItem("token");
-                if (!token) throw new Error("No auth token");
+                try {
+                  setIsSaving(true);
+                  const token = localStorage.getItem("token");
+                  if (!token) throw new Error("No auth token");
 
-                // update character
-                await UpdateCharacter(
-                  character.id,
-                  {
-                    name: draft.name,
-                    role: draft.role,
-                    traits: draft.traits,
-                    flaws: draft.flaws,
-                    narrative: draft.narrative,
-                    purpose: draft.purpose,
-                  },
-                  token,
-                );
+                  // update character
+                  await UpdateCharacter(
+                    character.id,
+                    {
+                      name: draft.name,
+                      role: draft.role,
+                      traits: draft.traits,
+                      flaws: draft.flaws,
+                      narrative: draft.narrative,
+                      purpose: draft.purpose,
+                    },
+                    token,
+                  );
 
-                // refetch full character
-                const response = await FetchSpecificCharacter(
-                  token,
-                  character.id.toString(),
-                );
-                setCharacter(response.character);
-                setDraft(response.character);
-                setIsDirty(false);
-              } catch (err) {
-                console.error(err);
-                alert("Failed to save changes");
-              } finally {
-                setIsSaving(false);
-              }
-            }}
-          />
-        </form>
-        <div className="mx-auto mb-4">
-          {character.artworks.length > 0 ? (
-            <Image
-              src={character.artworks[0].imageURL}
-              alt={character.name}
-              width={250}
-              height={250}
+                  // refetch full character
+                  const response = await FetchSpecificCharacter(
+                    token,
+                    character.id.toString(),
+                  );
+                  setCharacter(response.character);
+                  setDraft(response.character);
+                  setIsDirty(false);
+                } catch (err) {
+                  console.error(err);
+                  alert("Failed to save changes");
+                } finally {
+                  setIsSaving(false);
+                }
+              }}
             />
-          ) : (
-            <div className="w-62 h-62 flex items-center justify-center border">
-              No image
-            </div>
-          )}
-        </div>
+          </div>
+        </form>
       </div>
-      <div className="flex flex-col gap-16 lg:flex-row">
-        <div className="w-full px-8 lg:w-1/3 lg:px-0">
-          <h1 className="px-3">Narrative</h1>
+      <div className="flex flex-col gap-16 py-8">
+        <div className="w-full px-4">
+          <h1 className="text-[31.25px] px-4">Narrative</h1>
           <TipTap
             content={draft.narrative ?? { type: "doc", content: [] }}
             onChange={(doc) => {
@@ -241,8 +251,8 @@ export default function CharacterPage() {
             }}
           />
         </div>
-        <div className="w-full px-8 lg:w-1/3 lg:px-0">
-          <h1 className="px-3">Purpose</h1>
+        <div className="w-full px-4">
+          <h1 className="text-[31.25px] px-4">Purpose</h1>
           <TipTap
             content={draft.purpose ?? { type: "doc", content: [] }}
             onChange={(doc) => {
