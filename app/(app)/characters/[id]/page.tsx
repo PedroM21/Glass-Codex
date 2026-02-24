@@ -136,7 +136,7 @@ export default function CharacterPage() {
                     const val = e.target.value.trim();
                     setDraft({
                       ...draft,
-                      age: val === "" ? null : Number(val),
+                      age: val === "" ? undefined : Number(val),
                     });
                     setIsDirty(true);
                   }}

@@ -1,5 +1,4 @@
-// const BASE_URL = "https://glass-codex.vercel.app";
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://glass-codex.vercel.app";
 
 // Register a user
 export const Register = async (formData: {
