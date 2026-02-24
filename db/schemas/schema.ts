@@ -7,6 +7,7 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
+import type { JSONContent } from "@tiptap/react";
 
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -19,15 +20,23 @@ export const usersTable = pgTable("users", {
 // User can have multiple characters
 export const charactersTable = pgTable("characters", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
+
   name: varchar({ length: 255 }).notNull(),
   role: varchar({ length: 255 }).notNull(),
+  age: varchar({ length: 255 }),
+  species: varchar({ length: 255 }),
 
-  traits: jsonb().notNull().$type<string[]>().default([]),
-  flaws: jsonb().notNull().$type<string[]>().default([]),
-  arcs: jsonb().notNull().$type<string[]>().default([]),
+  coreWant: varchar({ length: 255 }),
+  coreNeed: varchar({ length: 255 }),
+  traits: jsonb().$type<string[]>().notNull().default([]),
+  flaws: jsonb().$type<string[]>().notNull().default([]),
 
-  narrative: jsonb().notNull().default({}),
-  purpose: jsonb().notNull().default({}),
+  backstory: jsonb().$type<JSONContent>().notNull().default({}),
+  personalityNotes: jsonb().$type<JSONContent>().notNull().default({}),
+  arcNotes: jsonb().$type<JSONContent>().notNull().default({}),
+  relationshipNotes: jsonb().$type<JSONContent>().notNull().default({}),
+  extraNotes: jsonb().$type<JSONContent>().notNull().default({}),
+
   createdAt: timestamp().notNull().defaultNow(),
   userId: integer()
     .notNull()
@@ -69,5 +78,5 @@ export const charactersRelations = relations(
     }), // Character belongs to User
     artworks: many(artworksTable), // Character has many artworks
     musicThemes: many(musicThemesTable), // Character has many music themes
-  })
+  }),
 );

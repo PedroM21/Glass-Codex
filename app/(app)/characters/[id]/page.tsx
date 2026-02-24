@@ -5,15 +5,11 @@ import { FetchSpecificCharacter, UpdateCharacter } from "@/lib/services/api";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { JSONContent } from "@tiptap/react";
 
 type Artwork = {
   id: number;
   imageURL: string;
-};
-
-type RichTextDoc = {
-  type: "doc";
-  content?: any[];
 };
 
 type Character = {
@@ -22,9 +18,15 @@ type Character = {
   role: string;
   traits: string[];
   flaws: string[];
-  arc: string[];
-  narrative: RichTextDoc;
-  purpose: RichTextDoc;
+  age?: number;
+  species?: string;
+  coreWant?: string;
+  coreNeed?: string;
+  backstory: JSONContent;
+  personalityNotes: JSONContent;
+  arcNotes: JSONContent;
+  relationshipNotes: JSONContent;
+  extraNotes: JSONContent;
   artworks: Artwork[];
 };
 
@@ -71,10 +73,28 @@ export default function CharacterPage() {
     fetchCharacter();
   }, [id]);
 
+  const saveRichTextField = async (field: keyof Character) => {
+    if (!draft) return;
+    setIsSaving(true);
+    const token = localStorage.getItem("token");
+    try {
+      await UpdateCharacter(character!.id, { [field]: draft[field] }, token!);
+      const response = await FetchSpecificCharacter(
+        token!,
+        character!.id.toString(),
+      );
+      setCharacter(response.character);
+      setDraft(response.character);
+    } catch (err) {
+      console.error(err);
+      alert(`Failed to save ${field}`);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   if (loading) return <p>Loading...</p>;
   if (!character || !draft) return <p>Character not found</p>;
-
-  console.log(character);
 
   return (
     <div className="min-h-screen">
@@ -83,10 +103,10 @@ export default function CharacterPage() {
       </h1>
       <div className="flex flex-col pt-8 justify-center gap-4 md:flex-row lg:justify-between">
         <form className="flex flex-col w-full gap-2 mx-auto px-4 xl:mx-0">
-          {/* name / role */}
+          {/* basic profile */}
           <div className="flex w-full">
             <div className="flex flex-col w-full justify-end gap-2">
-              <div className="flex flex-col gap-2 bg-[#1B3153] border-2 border-[#F1CF79] text-white p-2 rounded-xl w-2/3">
+              <div className="flex flex-col gap-2 bg-[#1B3153] border-2 border-[#2B2B2B] text-white p-2 rounded-xl w-2/3">
                 <span className="font-semibold px-2">Name</span>
                 <input
                   value={draft.name}
@@ -97,7 +117,7 @@ export default function CharacterPage() {
                   className="border px-2 py-1 rounded-xl bg-white text-[#2B2B2B]"
                 />
               </div>
-              <div className="flex flex-col gap-2 bg-[#1B3153] border-2 border-[#F1CF79] text-white p-2 rounded-xl w-2/3">
+              <div className="flex flex-col gap-2 bg-[#1B3153] border-2 border-[#2B2B2B] text-white p-2 rounded-xl w-2/3">
                 <span className="font-semibold px-2">Role</span>
                 <input
                   value={draft?.role}
@@ -108,16 +128,43 @@ export default function CharacterPage() {
                   className="border px-2 py-1 rounded-xl bg-white text-[#2B2B2B]"
                 />
               </div>
+              <div className="flex flex-col gap-2 bg-[#1B3153] border-2 border-[#2B2B2B] text-white p-2 rounded-xl w-2/3">
+                <span className="font-semibold px-2">Age</span>
+                <input
+                  value={draft?.age}
+                  onChange={(e) => {
+                    const val = e.target.value.trim();
+                    setDraft({
+                      ...draft,
+                      age: val === "" ? null : Number(val),
+                    });
+                    setIsDirty(true);
+                  }}
+                  className="border px-2 py-1 rounded-xl bg-white text-[#2B2B2B]"
+                />
+              </div>
+              <div className="flex flex-col gap-2 bg-[#1B3153] border-2 border-[#2B2B2B] text-white p-2 rounded-xl w-2/3">
+                <span className="font-semibold px-2">Species</span>
+                <input
+                  value={draft?.species ?? ""}
+                  onChange={(e) => {
+                    setDraft({ ...draft, species: e.target.value });
+                    setIsDirty(true);
+                  }}
+                  className="border px-2 py-1 rounded-xl bg-white text-[#2B2B2B]"
+                />
+              </div>
             </div>
             {/* Image of character */}
             <div className="hidden md:flex w-64 justify-center items-center">
               {character.artworks.length > 0 ? (
-                <div className="relative w-64 aspect-square rounded-md overflow-hidden">
+                <div className="relative w-64 aspect-auto overflow-hidden">
                   <Image
                     src={character.artworks[0].imageURL}
                     alt={character.name}
-                    fill
-                    className="object-contain"
+                    width={250}
+                    height={250}
+                    className="object-contain rounded-md "
                   />
                 </div>
               ) : (
@@ -127,7 +174,7 @@ export default function CharacterPage() {
               )}
             </div>
           </div>
-          <div className="flex flex-col gap-2 bg-[#1B3153] border-2 border-[#F1CF79] text-white p-2 rounded-xl">
+          <div className="flex flex-col gap-2 bg-[#1B3153] border-2 border-[#2B2B2B] text-white p-2 rounded-xl">
             <span className="font-semibold px-2">Traits</span>
             <input
               value={traitsInput}
@@ -146,7 +193,7 @@ export default function CharacterPage() {
               className="border px-2 py-1 rounded-xl bg-white text-[#2B2B2B]"
             />
           </div>
-          <div className="flex flex-col gap-2 bg-[#1B3153] border-2 border-[#F1CF79] text-white p-2 rounded-xl">
+          <div className="flex flex-col gap-2 bg-[#1B3153] border-2 border-[#2B2B2B] text-white p-2 rounded-xl">
             <span className="font-semibold px-2">Flaws</span>
             <input
               value={flawsInput}
@@ -160,6 +207,28 @@ export default function CharacterPage() {
                     .map((f) => f.trim())
                     .filter(Boolean),
                 });
+                setIsDirty(true);
+              }}
+              className="border px-2 py-1 rounded-xl bg-white text-[#2B2B2B]"
+            />
+          </div>
+          <div className="flex flex-col gap-2 bg-[#1B3153] border-2 border-[#2B2B2B] text-white p-2 rounded-xl">
+            <span className="font-semibold px-2">Core Want</span>
+            <input
+              value={draft?.coreWant ?? ""}
+              onChange={(e) => {
+                setDraft({ ...draft, coreWant: e.target.value });
+                setIsDirty(true);
+              }}
+              className="border px-2 py-1 rounded-xl bg-white text-[#2B2B2B]"
+            />
+          </div>
+          <div className="flex flex-col gap-2 bg-[#1B3153] border-2 border-[#2B2B2B] text-white p-2 rounded-xl">
+            <span className="font-semibold px-2">Core Need</span>
+            <input
+              value={draft?.coreNeed ?? ""}
+              onChange={(e) => {
+                setDraft({ ...draft, coreNeed: e.target.value });
                 setIsDirty(true);
               }}
               className="border px-2 py-1 rounded-xl bg-white text-[#2B2B2B]"
@@ -185,10 +254,12 @@ export default function CharacterPage() {
                     {
                       name: draft.name,
                       role: draft.role,
+                      age: draft.age,
+                      species: draft.species,
+                      coreWant: draft.coreWant,
+                      coreNeed: draft.coreNeed,
                       traits: draft.traits,
                       flaws: draft.flaws,
-                      narrative: draft.narrative,
-                      purpose: draft.purpose,
                     },
                     token,
                   );
@@ -214,79 +285,83 @@ export default function CharacterPage() {
       </div>
       <div className="flex flex-col gap-16 py-8">
         <div className="w-full px-4">
-          <h1 className="text-[31.25px] px-4">Narrative</h1>
+          <h1 className="text-[31.25px] px-4">Backstory</h1>
           <TipTap
-            content={draft.narrative ?? { type: "doc", content: [] }}
+            content={draft.backstory ?? { type: "doc", content: [] }}
             onChange={(doc) => {
-              setDraft({ ...draft, narrative: doc });
+              setDraft({ ...draft, backstory: doc });
               setIsDirty(true);
             }}
           />
           <Button
-            label="Save Narrative"
+            label="Save Backstory"
             color="bg-[#f1cf79]"
             textColor="text-[#2B2B2B]"
-            onClick={async () => {
-              if (!draft) return;
-              setIsSaving(true);
-              const token = localStorage.getItem("token");
-              try {
-                await UpdateCharacter(
-                  character.id,
-                  { narrative: draft.narrative },
-                  token!,
-                );
-                const response = await FetchSpecificCharacter(
-                  token!,
-                  character.id.toString(),
-                );
-                setCharacter(response.character);
-                setDraft(response.character);
-              } catch (err) {
-                console.error(err);
-                alert("Failed to save narrative");
-              } finally {
-                setIsSaving(false);
-              }
-            }}
+            onClick={() => saveRichTextField("backstory")}
           />
         </div>
         <div className="w-full px-4">
-          <h1 className="text-[31.25px] px-4">Purpose</h1>
+          <h1 className="text-[31.25px] px-4">Personality Notes</h1>
           <TipTap
-            content={draft.purpose ?? { type: "doc", content: [] }}
+            content={draft.personalityNotes ?? { type: "doc", content: [] }}
             onChange={(doc) => {
-              setDraft({ ...draft, purpose: doc });
+              setDraft({ ...draft, personalityNotes: doc });
               setIsDirty(true);
             }}
           />
           <Button
-            label="Save Purpose"
+            label="Save Personality Notes"
             color="bg-[#f1cf79]"
             textColor="text-[#2B2B2B]"
-            onClick={async () => {
-              if (!draft) return;
-              setIsSaving(true);
-              const token = localStorage.getItem("token");
-              try {
-                await UpdateCharacter(
-                  character.id,
-                  { purpose: draft.purpose },
-                  token!,
-                );
-                const response = await FetchSpecificCharacter(
-                  token!,
-                  character.id.toString(),
-                );
-                setCharacter(response.character);
-                setDraft(response.character);
-              } catch (err) {
-                console.error(err);
-                alert("Failed to save purpose");
-              } finally {
-                setIsSaving(false);
-              }
+            onClick={() => saveRichTextField("personalityNotes")}
+          />
+        </div>
+        <div className="w-full px-4">
+          <h1 className="text-[31.25px] px-4">Character Arc</h1>
+          <TipTap
+            content={draft.arcNotes ?? { type: "doc", content: [] }}
+            onChange={(doc) => {
+              setDraft({ ...draft, arcNotes: doc });
+              setIsDirty(true);
             }}
+          />
+          <Button
+            label="Save Character Arc"
+            color="bg-[#f1cf79]"
+            textColor="text-[#2B2B2B]"
+            onClick={() => saveRichTextField("arcNotes")}
+          />
+        </div>
+        <div className="w-full px-4">
+          <h1 className="text-[31.25px] px-4">Relationships</h1>
+          <TipTap
+            content={draft.relationshipNotes ?? { type: "doc", content: [] }}
+            onChange={(doc) => {
+              setDraft({ ...draft, relationshipNotes: doc });
+              setIsDirty(true);
+            }}
+          />
+          <Button
+            label="Save Relationships"
+            color="bg-[#f1cf79]"
+            textColor="text-[#2B2B2B]"
+            onClick={() => saveRichTextField("relationshipNotes")}
+          />
+        </div>
+        <div className="w-full px-4">
+          <h1 className="text-[31.25px] px-4">Extra Notes</h1>
+          <TipTap
+            content={draft.extraNotes ?? { type: "doc", content: [] }}
+            onChange={(doc) => {
+              setDraft({ ...draft, extraNotes: doc });
+              setIsDirty(true);
+            }}
+          />
+          <Button
+            label="Save Extra Notes"
+            color="bg-[#f1cf79]"
+            textColor="text-[#2B2B2B]"
+            onClick={() => saveRichTextField("extraNotes")}
           />
         </div>
       </div>

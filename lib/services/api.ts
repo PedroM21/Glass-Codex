@@ -1,4 +1,5 @@
-const BASE_URL = "https://glass-codex.vercel.app";
+// const BASE_URL = "https://glass-codex.vercel.app";
+const BASE_URL = "http://localhost:3000";
 
 // Register a user
 export const Register = async (formData: {
@@ -152,8 +153,15 @@ export const UpdateCharacter = async (
     role: string;
     traits: string[];
     flaws: string[];
-    narrative: any;
-    purpose: any;
+    backstory: any;
+    personalityNotes: any;
+    arcNotes: any;
+    relationshipNotes: any;
+    extraNotes: any;
+    age: number;
+    species?: string;
+    coreWant: string;
+    coreNeed: string;
   }>,
   token: string,
 ) => {

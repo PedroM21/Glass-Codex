@@ -2,25 +2,20 @@
 
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import type { JSONContent } from "@tiptap/core";
+import type { JSONContent } from "@tiptap/react";
 import FormatBoldIcon from "@mui/icons-material/FormatBold";
 import FormatItalicIcon from "@mui/icons-material/FormatItalic";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import { useState } from "react";
 
-type RichTextDoc = {
-  type: "doc";
-  content?: any[];
-};
-
 type TipTapProps = {
-  content: RichTextDoc;
-  onChange?: (doc: RichTextDoc) => void;
+  content: JSONContent;
+  onChange?: (doc: JSONContent) => void;
 };
 
 const TipTap = ({ content, onChange }: TipTapProps) => {
   const [, setSelectionVersion] = useState(0);
-  const safeContent: RichTextDoc =
+  const safeContent: JSONContent =
     content?.type === "doc" ? content : { type: "doc", content: [] };
 
   const editor = useEditor({
@@ -34,14 +29,12 @@ const TipTap = ({ content, onChange }: TipTapProps) => {
       },
     },
     onUpdate: ({ editor }) => {
-      onChange?.(editor.getJSON() as RichTextDoc);
+      onChange?.(editor.getJSON() as JSONContent);
     },
     onSelectionUpdate: () => {
       setSelectionVersion((v) => v + 1);
     },
   });
-
-  console.log(editor);
 
   return (
     <div className="bg-white rounded-xl p-4 border">

@@ -10,37 +10,43 @@ export const getCharacters = async (req: Request) => {
     // verify user
     const user = await authCheck(req);
 
-    // fetch characters from the database
-    const userCharacters = await db
-      .select()
+    if (!user) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    const results = await db
+      .select({ character: charactersTable, artwork: artworksTable })
       .from(charactersTable)
+      .leftJoin(
+        artworksTable,
+        eq(artworksTable.characterId, charactersTable.id),
+      )
       .where(eq(charactersTable.userId, user.id));
 
-    // fetch artworks for each character
-    const charactersWithArtworks = await Promise.all(
-      userCharacters.map(async (char) => {
-        const artworks = await db
-          .select()
-          .from(artworksTable)
-          .where(eq(artworksTable.characterId, char.id));
+    const characterMap = new Map();
 
-        return {
-          ...char,
-          artworks,
-        };
-      }),
-    );
+    for (const row of results) {
+      const char = row.character;
+      const artwork = row.artwork;
+
+      if (!characterMap.has(char.id)) {
+        characterMap.set(char.id, { ...char, artworks: [] });
+      }
+
+      if (artwork) {
+        characterMap.get(char.id).artworks.push(artwork);
+      }
+    }
 
     return NextResponse.json(
       {
         success: true,
-        message: "Characters fetched successfully",
-        data: { characters: charactersWithArtworks },
+        data: { characters: Array.from(characterMap.values()) },
       },
       { status: 200 },
     );
   } catch (error) {
-    console.error(error);
+    console.error("getCharacters error:", error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 },
@@ -199,7 +205,22 @@ export const updateCharacter = async (req: Request, id: string) => {
 
     // parse body
     const body = await req.json();
-    const { name, role, traits, flaws, narrative, purpose } = body;
+    const {
+      name,
+      role,
+      traits,
+      flaws,
+      age,
+      gender,
+      species,
+      coreWant,
+      coreNeed,
+      backstory,
+      personalityNotes,
+      arcNotes,
+      relationshipNotes,
+      extraNotes,
+    } = body;
 
     // partial update object
     const updateData: Record<string, any> = {};
@@ -208,8 +229,18 @@ export const updateCharacter = async (req: Request, id: string) => {
     if (role !== undefined) updateData.role = role;
     if (traits !== undefined) updateData.traits = traits;
     if (flaws !== undefined) updateData.flaws = flaws;
-    if (narrative !== undefined) updateData.narrative = narrative;
-    if (purpose !== undefined) updateData.purpose = purpose;
+    if (age !== undefined) updateData.age = age;
+    if (gender !== undefined) updateData.gender = gender;
+    if (species !== undefined) updateData.species = species;
+    if (coreWant !== undefined) updateData.coreWant = coreWant;
+    if (coreNeed !== undefined) updateData.coreNeed = coreNeed;
+    if (backstory !== undefined) updateData.backstory = backstory;
+    if (personalityNotes !== undefined)
+      updateData.personalityNotes = personalityNotes;
+    if (arcNotes !== undefined) updateData.arcNotes = arcNotes;
+    if (relationshipNotes !== undefined)
+      updateData.relationshipNotes = relationshipNotes;
+    if (extraNotes !== undefined) updateData.extraNotes = extraNotes;
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
