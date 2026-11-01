@@ -3,9 +3,7 @@ import { db } from "@/db/index";
 import { usersTable } from "@/db/schemas/schema";
 import { generateToken } from "@/lib/jwt";
 import { eq } from "drizzle-orm";
-import jwt from "jsonwebtoken";
-
-const JWT_SECRET = process.env.JWT_SECRET!;
+import { AuthenticationError, getUserIdFromRequest } from "@/lib/auth";
 
 // Register a new user
 export const register = async (req: Request) => {
@@ -93,33 +91,18 @@ export const login = async (req: Request) => {
   }
 };
 
-// Auth check (token + user exist)
+// Authenticate the token, then confirm that its account still exists.
 export const authCheck = async (req: Request) => {
-  try {
-    // Check headers for token
-    const authHeader = req.headers.get("authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer")) {
-      throw new Error("No token provided");
-    }
+  const userId = getUserIdFromRequest(req);
 
-    const token = authHeader.split(" ")[1];
+  const [user] = await db
+    .select({ id: usersTable.id, username: usersTable.username })
+    .from(usersTable)
+    .where(eq(usersTable.id, userId));
 
-    // Verify token
-    const decoded = jwt.verify(token, JWT_SECRET) as { id: number };
-
-    // Use the decoded token to find the user
-    const [user] = await db
-      .select({ id: usersTable.id, username: usersTable.username })
-      .from(usersTable)
-      .where(eq(usersTable.id, decoded.id));
-
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    return user;
-  } catch (error) {
-    console.error(error);
-    throw new Error("Authentication failed");
+  if (!user) {
+    throw new AuthenticationError();
   }
+
+  return user;
 };
