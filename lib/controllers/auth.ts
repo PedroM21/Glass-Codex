@@ -4,90 +4,80 @@ import { usersTable } from "@/db/schemas/schema";
 import { generateToken } from "@/lib/jwt";
 import { eq } from "drizzle-orm";
 import { AuthenticationError, getUserIdFromRequest } from "@/lib/auth";
+import { parseLoginInput, parseRegistrationInput, readJsonBody } from "@/lib/auth-input";
+import { isUniqueViolation } from "@/lib/db-errors";
+import { ConflictError } from "@/lib/http-errors";
+import { handleApiError } from "@/lib/api-error";
 
-// Register a new user
-export const register = async (req: Request) => {
+// Register a new user. Rely on database uniqueness constraints to avoid races.
+export const register = async (req: Request): Promise<Response> => {
   try {
-    const { username, password, email } = await req.json();
+    const { username, password, email } =
+      parseRegistrationInput(await readJsonBody(req));
 
-    const existingUser = await db
-      .select()
-      .from(usersTable)
-      .where(eq(usersTable.username, username));
-
-    if (existingUser.length > 0) {
-      return new Response("User already exists", { status: 409 });
-    }
-
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    // bcrypt generates a unique salt; the result is safe to store, not the password.
+    const passwordHash = await bcrypt.hash(password, 10);
 
     const [newUser] = await db
       .insert(usersTable)
-      .values({
-        username,
-        passwordHash: hashedPassword,
-        email,
-      })
+      .values({ username, passwordHash, email })
       .returning({ id: usersTable.id, username: usersTable.username });
 
-    // Generate token
     const token = generateToken(newUser);
 
-    return new Response(
-      JSON.stringify({
+    return Response.json(
+      {
         success: true,
         message: "User registered successfully",
         data: { token, user: newUser },
-      }),
-      { status: 201 },
+      },
+      { status: 201, headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {
-    console.error(error);
-    return new Response(JSON.stringify({ message: "Internal server error" }), {
-      status: 500,
-    });
+    if (isUniqueViolation(error)) {
+      return handleApiError(new ConflictError(), "register");
+    }
+    return handleApiError(error, "register");
   }
 };
 
-// Login an existing user
-export const login = async (req: Request) => {
+// Authenticate a user. Never reveal whether the username or password was wrong.
+export const login = async (req: Request): Promise<Response> => {
   try {
-    const { username, password } = await req.json();
+    const { username, password } = parseLoginInput(await readJsonBody(req));
 
     const [user] = await db
-      .select()
+      .select({
+        id: usersTable.id,
+        username: usersTable.username,
+        passwordHash: usersTable.passwordHash,
+      })
       .from(usersTable)
-      .where(eq(usersTable.username, username));
+      .where(eq(usersTable.username, username))
+      .limit(1);
 
-    if (!user) {
-      throw new Error("User not found!");
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
-    if (!isPasswordValid) {
-      throw new Error("Invalid password");
+    if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+      return Response.json(
+        { success: false, message: "Invalid username or password" },
+        { status: 401, headers: { "Cache-Control": "no-store" } },
+      );
     }
 
     const token = generateToken({ id: user.id, username: user.username });
 
-    return new Response(
-      JSON.stringify({
+    return Response.json(
+      {
         success: true,
         message: "Login successful",
-        data: { token, user: { id: user.id, username: user.username } },
-      }),
-      { status: 200 },
+        data: {
+          token,
+          user: { id: user.id, username: user.username },
+        },
+      },
+      { status: 200, headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {
-    console.error(error);
-    return new Response(
-      JSON.stringify({
-        message: (error as Error).message || "Internal server error",
-      }),
-      { status: 500 },
-    );
+    return handleApiError(error, "login");
   }
 };
 
