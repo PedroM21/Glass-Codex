@@ -23,5 +23,5 @@ jobs:
         run: npm ci
       - name: Run authentication unit tests
         run: npm test
-      - name: Type-check application and tests
-        run: npx tsc --noEmit
+      - name: Generate Next.js types and type-check
+        run: npx next typegen && npx tsc --noEmit
