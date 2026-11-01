@@ -3,16 +3,13 @@ import { artworksTable, charactersTable } from "@/db/schemas/schema";
 import { NextResponse } from "next/server";
 import { eq, and } from "drizzle-orm";
 import { authCheck } from "./auth";
+import { handleApiError } from "@/lib/api-error";
 
 // View all characters for a user
 export const getCharacters = async (req: Request) => {
   try {
     // verify user
     const user = await authCheck(req);
-
-    if (!user) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
 
     const results = await db
       .select({ character: charactersTable, artwork: artworksTable })
@@ -46,11 +43,7 @@ export const getCharacters = async (req: Request) => {
       { status: 200 },
     );
   } catch (error) {
-    console.error("getCharacters error:", error);
-    return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 },
-    );
+    return handleApiError(error, "getCharacters");
   }
 };
 
@@ -107,11 +100,7 @@ export const getSpecificCharacter = async (req: Request, id: string) => {
       { status: 200 },
     );
   } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 },
-    );
+    return handleApiError(error, "getSpecificCharacter");
   }
 };
 
@@ -177,14 +166,7 @@ export const createCharacter = async (req: Request) => {
       { status: 201 },
     );
   } catch (error) {
-    console.error("Create character error: ", error);
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Failed to create character",
-      },
-      { status: 500 },
-    );
+    return handleApiError(error, "createCharacter");
   }
 };
 
@@ -288,11 +270,7 @@ export const updateCharacter = async (req: Request, id: string) => {
       { status: 200 },
     );
   } catch (error) {
-    console.error("Update character error: ", error);
-    return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 },
-    );
+    return handleApiError(error, "updateCharacter");
   }
 };
 
@@ -340,13 +318,6 @@ export const deleteCharacter = async (
       message: "Character deleted successfully.",
     });
   } catch (error) {
-    console.error("Error deleting character: ", error);
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Failed to delete character",
-      },
-      { status: 500 },
-    );
+    return handleApiError(error, "deleteCharacter");
   }
 };
