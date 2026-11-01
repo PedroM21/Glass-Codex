@@ -43,7 +43,6 @@ export const Login = async (formData: {
       throw new Error(data.message || "Failed to login.");
     }
 
-    console.log("Logged in successfully: ", data);
     return data.data; // This should return { token, user }
   } catch (error) {
     throw error;
