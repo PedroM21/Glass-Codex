@@ -1,9 +1,9 @@
 "use client";
 import Button from "@/components/ui/Button";
 import TipTap from "@/components/ui/Tiptap";
-import { FetchSpecificCharacter, UpdateCharacter } from "@/lib/services/api";
+import { FetchSpecificCharacter, UpdateCharacter, isUnauthorized } from "@/lib/services/api";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { JSONContent } from "@tiptap/react";
 
@@ -32,6 +32,7 @@ type Character = {
 
 export default function CharacterPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const [character, setCharacter] = useState<Character | null>(null);
   const [loading, setLoading] = useState(true);
   const [draft, setDraft] = useState<Character | null>(null);
@@ -55,37 +56,36 @@ export default function CharacterPage() {
 
     const fetchCharacter = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("No auth token found");
-        }
-
-        const response = await FetchSpecificCharacter(token, id);
+        const response = await FetchSpecificCharacter(id);
         setCharacter(response.character);
         setDraft(response.character);
       } catch (error) {
-        console.log("Error fetching character: ", error);
+        if (isUnauthorized(error)) {
+          router.replace("/login");
+          return;
+        }
+        console.error("Error fetching character: ", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchCharacter();
-  }, [id]);
+  }, [id, router]);
 
   const saveRichTextField = async (field: keyof Character) => {
     if (!draft) return;
     setIsSaving(true);
-    const token = localStorage.getItem("token");
     try {
-      await UpdateCharacter(character!.id, { [field]: draft[field] }, token!);
-      const response = await FetchSpecificCharacter(
-        token!,
-        character!.id.toString(),
-      );
+      await UpdateCharacter(character!.id, { [field]: draft[field] });
+      const response = await FetchSpecificCharacter(character!.id.toString());
       setCharacter(response.character);
       setDraft(response.character);
     } catch (err) {
+      if (isUnauthorized(err)) {
+        router.replace("/login");
+        return;
+      }
       console.error(err);
       alert(`Failed to save ${field}`);
     } finally {
@@ -245,9 +245,6 @@ export default function CharacterPage() {
 
                 try {
                   setIsSaving(true);
-                  const token = localStorage.getItem("token");
-                  if (!token) throw new Error("No auth token");
-
                   // update character
                   await UpdateCharacter(
                     character.id,
@@ -261,18 +258,20 @@ export default function CharacterPage() {
                       traits: draft.traits,
                       flaws: draft.flaws,
                     },
-                    token,
                   );
 
                   // refetch full character
                   const response = await FetchSpecificCharacter(
-                    token,
                     character.id.toString(),
                   );
                   setCharacter(response.character);
                   setDraft(response.character);
                   setIsDirty(false);
                 } catch (err) {
+                  if (isUnauthorized(err)) {
+                    router.replace("/login");
+                    return;
+                  }
                   console.error(err);
                   alert("Failed to save changes");
                 } finally {
