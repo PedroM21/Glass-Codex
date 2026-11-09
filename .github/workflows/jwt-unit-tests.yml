@@ -25,3 +25,8 @@ jobs:
         run: npm test
       - name: Generate Next.js types and type-check
         run: npx next typegen && npx tsc --noEmit
+      - name: Production build smoke check (dummy configuration only)
+        env:
+          DATABASE_URL: postgresql://test:test@ep-test.neon.tech/neondb?sslmode=require
+          JWT_SECRET: ci-only-not-a-real-secret-for-build-check
+        run: npm run build
