@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Button from "../ui/Button";
 import CloudinaryUploadWidget from "@/app/cloudinary";
-import { CreateCharacter } from "@/lib/services/api";
+import { CreateCharacter, isUnauthorized } from "@/lib/services/api";
 import { useRouter } from "next/navigation";
 import { easeIn, motion } from "motion/react";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -16,6 +16,7 @@ export default function CharacterModal({
   const [imageUrl, setImageUrl] = useState("");
   const [imagePublicId, setImagePublicId] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     role: "",
@@ -51,16 +52,16 @@ export default function CharacterModal({
     };
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        router.push("/login");
-        throw new Error("No auth token found");
-      }
-      const data = await CreateCharacter(payload, token);
+      setSubmitError("");
+      const data = await CreateCharacter(payload);
       onCharacterCreated(data.character);
       setIsOpen(false);
     } catch (error) {
-      console.log("Failed to create character: ", error);
+      if (isUnauthorized(error)) {
+        router.replace("/login");
+        return;
+      }
+      setSubmitError(error instanceof Error ? error.message : "Failed to create character");
     }
   };
 
@@ -143,6 +144,7 @@ export default function CharacterModal({
                   </div>
                 )}
               </CloudinaryUploadWidget>
+              {submitError && <p role="alert" className="text-red-200">{submitError}</p>}
               <div className="flex justify-center gap-8">
                 <Button
                   type="submit"
