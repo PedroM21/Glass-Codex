@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { eq, and } from "drizzle-orm";
 import { authCheck } from "./auth";
 import { handleApiError } from "@/lib/api-error";
+import { rejectCrossOriginMutation } from "@/lib/csrf";
 
 // View all characters for a user
 export const getCharacters = async (req: Request) => {
@@ -107,6 +108,8 @@ export const getSpecificCharacter = async (req: Request, id: string) => {
 // Create a new character
 export const createCharacter = async (req: Request) => {
   try {
+    const blocked = rejectCrossOriginMutation(req);
+    if (blocked) return blocked;
     const { name, role, traits, flaws, imageURL } = await req.json();
 
     if (!name) {
@@ -173,6 +176,8 @@ export const createCharacter = async (req: Request) => {
 // Update character details
 export const updateCharacter = async (req: Request, id: string) => {
   try {
+    const blocked = rejectCrossOriginMutation(req);
+    if (blocked) return blocked;
     const characterId = Number(id);
 
     if (isNaN(characterId)) {
@@ -280,6 +285,9 @@ export const deleteCharacter = async (
   { params }: { params: Promise<{ id: string }> },
 ) => {
   try {
+    const blocked = rejectCrossOriginMutation(req);
+    if (blocked) return blocked;
+
     const { id } = await params;
     const numericId = Number(id);
 
