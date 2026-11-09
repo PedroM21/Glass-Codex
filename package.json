@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx --test tests/*.test.ts"
+    "test": "tsx --test tests/*.test.ts",
+    "test:db": "tsx --test tests/*.integration.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
