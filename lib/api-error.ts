@@ -20,7 +20,7 @@ export function handleApiError(error: unknown, operation: string): Response {
   if (error instanceof AuthenticationError) {
     return Response.json(
       { success: false, message: "Authentication required" },
-      { status: 401, headers: { "WWW-Authenticate": "Bearer" } },
+      { status: 401, headers: { "Cache-Control": "no-store" } },
     );
   }
 
