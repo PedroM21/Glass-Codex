@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { Logout } from "@/lib/services/api";
 import Link from "next/link";
 import DashboardIcon from "../ui/icons/Dashboard";
 import CharacterIcon from "../ui/icons/Character";
@@ -12,7 +13,26 @@ import Expand from "../ui/icons/Expand";
 export default function Sidebar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [expandSidebar, setExpandSidebar] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    setLogoutError("");
+    try {
+      await Logout();
+      localStorage.removeItem("token"); // Clean up old stored JWT, if present.
+      localStorage.removeItem("user");
+      router.replace("/login");
+      router.refresh();
+    } catch {
+      setLogoutError("Could not sign out. Please try again.");
+    } finally {
+      setLoggingOut(false);
+    }
+  };
 
   const navItems = [
     { href: "/dashboard", label: "Dashboard", icon: <DashboardIcon /> },
@@ -99,6 +119,17 @@ export default function Sidebar() {
             );
           })}
         </ul>
+        <div className="my-8 px-2">
+          <button
+            type="button"
+            onClick={handleLogout}
+            disabled={loggingOut}
+            className="text-white underline underline-offset-4 disabled:opacity-50"
+          >
+            {loggingOut ? "Signing out..." : "Sign out"}
+          </button>
+          {logoutError && <p role="alert" className="text-red-200 text-xs">{logoutError}</p>}
+        </div>
       </aside>
     </>
   );
