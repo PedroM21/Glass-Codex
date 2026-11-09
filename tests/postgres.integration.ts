@@ -9,6 +9,7 @@ import { usersTable } from "../db/schemas/schema";
 import { createAuthHandlers } from "../lib/auth-handlers";
 import { createDrizzleAccountStore } from "../lib/drizzle-account-store";
 import { verifyToken } from "../lib/jwt";
+import { getSessionToken } from "../lib/session";
 
 // Only an explicitly configured, local, disposable PostgreSQL database is allowed.
 // Tests must not import the production db/index.ts connection.
@@ -86,7 +87,16 @@ test("register and log in using real PostgreSQL, Drizzle, bcrypt and JWT", async
   }));
   assert.equal(loggedIn.status, 200);
   const body = await loggedIn.json();
-  assert.deepEqual(verifyToken(body.data.token), {
+  assert.equal(body.data.token, undefined);
+  const cookie = loggedIn.headers.get("Set-Cookie");
+  assert.match(cookie ?? "", /HttpOnly/);
+  const token = getSessionToken(
+    new Request("https://glass-codex.test/", {
+      headers: { Cookie: cookie!.split(";")[0] },
+    }),
+  );
+  assert.ok(token);
+  assert.deepEqual(verifyToken(token), {
     id: userId,
     username: input.username,
   });
