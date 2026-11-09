@@ -1,0 +1,31 @@
+name: Prepare PostgreSQL test dependencies (one-time)
+on:
+  push:
+    branches:
+      - refactor/v2-auth-jwt-step-1
+    paths:
+      - .github/workflows/prepare-postgres-test-deps.yml
+
+permissions:
+  contents: write
+
+jobs:
+  update-lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Install test-only PostgreSQL dependencies and update lockfile
+        run: npm install --save-dev --save-exact pg@8.16.3 @types/pg@8.15.5
+      - name: Commit generated package-lock updates to refactor branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+          git diff --cached --quiet || git commit -m "test(db): add node-postgres test driver and locked dependencies"
+          git push origin HEAD:refactor/v2-auth-jwt-step-1
