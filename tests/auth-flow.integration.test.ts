@@ -8,6 +8,7 @@ import {
   type StoredAccount,
 } from "../lib/auth-handlers";
 import { verifyToken } from "../lib/jwt";
+import { getSessionToken } from "../lib/session";
 
 const SECRET = "glass-codex-controller-integration-test-secret";
 const previousSecret = process.env.JWT_SECRET;
@@ -71,7 +72,17 @@ test("register then log in with the same account using real bcrypt and JWT", asy
   const registeredBody = await created.json();
   assert.deepEqual(registeredBody.data.user, { id: 1, username: "writer" });
   assert.equal(registeredBody.data.user.passwordHash, undefined);
-  assert.deepEqual(verifyToken(registeredBody.data.token), {
+  assert.equal(registeredBody.data.token, undefined);
+  const registerCookie = created.headers.get("Set-Cookie");
+  assert.match(registerCookie ?? "", /HttpOnly/);
+  assert.match(registerCookie ?? "", /SameSite=Lax/);
+  const registeredToken = getSessionToken(
+    new Request("https://glass-codex.test/", {
+      headers: { Cookie: registerCookie!.split(";")[0] },
+    }),
+  );
+  assert.ok(registeredToken);
+  assert.deepEqual(verifyToken(registeredToken), {
     id: 1,
     username: "writer",
   });
@@ -94,7 +105,16 @@ test("register then log in with the same account using real bcrypt and JWT", asy
 
   const loginBody = await signedIn.json();
   assert.deepEqual(loginBody.data.user, { id: 1, username: "writer" });
-  assert.deepEqual(verifyToken(loginBody.data.token), {
+  assert.equal(loginBody.data.token, undefined);
+  const loginCookie = signedIn.headers.get("Set-Cookie");
+  assert.match(loginCookie ?? "", /HttpOnly/);
+  const signedInToken = getSessionToken(
+    new Request("https://glass-codex.test/", {
+      headers: { Cookie: loginCookie!.split(";")[0] },
+    }),
+  );
+  assert.ok(signedInToken);
+  assert.deepEqual(verifyToken(signedInToken), {
     id: 1,
     username: "writer",
   });
