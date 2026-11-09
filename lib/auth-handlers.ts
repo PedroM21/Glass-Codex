@@ -8,6 +8,7 @@ import {
 import { isUniqueViolation } from "./db-errors";
 import { ConflictError } from "./http-errors";
 import { generateToken } from "./jwt";
+import { setSessionCookie } from "./session";
 
 export type StoredAccount = {
   id: number;
@@ -38,13 +39,16 @@ export function createAuthHandlers(store: AccountStore) {
       const newUser = await store.create({ username, passwordHash, email });
 
       const token = generateToken(newUser);
-      return Response.json(
-        {
-          success: true,
-          message: "User registered successfully",
-          data: { token, user: newUser },
-        },
-        { status: 201, headers: { "Cache-Control": "no-store" } },
+      return setSessionCookie(
+        Response.json(
+          {
+            success: true,
+            message: "User registered successfully",
+            data: { user: newUser },
+          },
+          { status: 201, headers: { "Cache-Control": "no-store" } },
+        ),
+        token,
       );
     } catch (error) {
       if (isUniqueViolation(error)) {
@@ -67,16 +71,18 @@ export function createAuthHandlers(store: AccountStore) {
       }
 
       const token = generateToken({ id: user.id, username: user.username });
-      return Response.json(
-        {
-          success: true,
-          message: "Login successful",
-          data: {
-            token,
-            user: { id: user.id, username: user.username },
+      return setSessionCookie(
+        Response.json(
+          {
+            success: true,
+            message: "Login successful",
+            data: {
+              user: { id: user.id, username: user.username },
+            },
           },
-        },
-        { status: 200, headers: { "Cache-Control": "no-store" } },
+          { status: 200, headers: { "Cache-Control": "no-store" } },
+        ),
+        token,
       );
     } catch (error) {
       return handleApiError(error, "login");
