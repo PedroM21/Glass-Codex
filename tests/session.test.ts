@@ -38,8 +38,10 @@ test("session cookie cannot be read by frontend JavaScript and has limited scope
 });
 
 test("production cookie uses Secure and the __Host- prefix", () => {
-  const previous = process.env.NODE_ENV;
-  process.env.NODE_ENV = "production";
+  // Node's process.env.NODE_ENV is typed read-only; use a test-only mutable view.
+  const environment = process.env as Record<string, string | undefined>;
+  const previous = environment.NODE_ENV;
+  environment.NODE_ENV = "production";
   try {
     const response = setSessionCookie(new Response(), "abc");
     const cookie = response.headers.get("Set-Cookie") ?? "";
@@ -47,8 +49,8 @@ test("production cookie uses Secure and the __Host- prefix", () => {
     assert.match(cookie, /^__Host-gc_session=/);
     assert.match(cookie, /(?:^|; )Secure(?:;|$)/);
   } finally {
-    if (previous === undefined) delete process.env.NODE_ENV;
-    else process.env.NODE_ENV = previous;
+    if (previous === undefined) delete environment.NODE_ENV;
+    else environment.NODE_ENV = previous;
   }
 });
 
