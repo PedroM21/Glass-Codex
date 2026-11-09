@@ -1,6 +1,6 @@
 "use client";
 
-import { DeleteCharacter, FetchCharacters } from "@/lib/services/api";
+import { DeleteCharacter, FetchCharacters, isUnauthorized } from "@/lib/services/api";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import CharacterCard from "@/components/ui/CharacterCard";
@@ -11,25 +11,25 @@ export default function CharactersPage() {
   const router = useRouter();
   const [characters, setCharacters] = useState<any[]>([]);
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
+  const [deleteError, setDeleteError] = useState("");
 
   // fetch characters from the API
   useEffect(() => {
     const fetchCharacters = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          router.push("/login");
-          throw new Error("No auth token found");
-        }
-        const response = await FetchCharacters(token);
+        const response = await FetchCharacters();
         setCharacters(response.characters);
       } catch (error) {
+        if (isUnauthorized(error)) {
+          router.replace("/login");
+          return;
+        }
         console.error("Error fetching characters: ", error);
       }
     };
 
     fetchCharacters();
-  }, []);
+  }, [router]);
 
   const handleCharacterCreated = (newCharacter: any) => {
     setCharacters((prev) => [...prev, newCharacter]);
@@ -37,19 +37,19 @@ export default function CharactersPage() {
 
   const handleConfirmDelete = async () => {
     if (deleteTargetId === null) return;
+    setDeleteError("");
 
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login");
-      return;
+    try {
+      await DeleteCharacter(deleteTargetId);
+      setCharacters((prev) => prev.filter((c) => c.id !== deleteTargetId));
+      setDeleteTargetId(null);
+    } catch (error) {
+      if (isUnauthorized(error)) {
+        router.replace("/login");
+        return;
+      }
+      setDeleteError(error instanceof Error ? error.message : "Could not delete character");
     }
-
-    await DeleteCharacter(token, deleteTargetId);
-
-    // Rerender after deletion
-    setCharacters((prev) => prev.filter((c) => c.id !== deleteTargetId));
-
-    setDeleteTargetId(null); // Close modal
   };
 
   return (
@@ -71,6 +71,7 @@ export default function CharactersPage() {
           </div>
         ))}
       </div>
+      {deleteError && <p role="alert" className="text-red-700 px-8">{deleteError}</p>}
       <ConfirmDeleteModal
         isOpen={deleteTargetId !== null}
         onConfirm={handleConfirmDelete}
