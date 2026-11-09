@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { FetchCharacters } from "@/lib/services/api";
+import { FetchCharacters, isUnauthorized } from "@/lib/services/api";
 import DashboardCharCard from "@/components/ui/DashboardCharCard";
 import Button from "@/components/ui/Button";
 import Link from "next/link";
@@ -14,12 +14,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchCharacters = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          router.push("/login");
-          throw new Error("No auth token found");
-        }
-        const response = await FetchCharacters(token);
+        const response = await FetchCharacters();
 
         // get the 5 most recent characters
         const recentCharacters = response.characters
@@ -31,12 +26,16 @@ export default function DashboardPage() {
 
         setCharacters(recentCharacters);
       } catch (error) {
+        if (isUnauthorized(error)) {
+          router.replace("/login");
+          return;
+        }
         console.error("Error fetching characters: ", error);
       }
     };
 
     fetchCharacters();
-  }, []);
+  }, [router]);
 
   return (
     <div className="text-center mb-16 lg:text-start">
