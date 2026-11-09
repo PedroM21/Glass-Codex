@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Register } from "@/lib/services/api";
 import Button from "@/components/ui/Button";
@@ -14,8 +14,6 @@ export default function RegisterPage() {
   });
 
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
-  const [userToken, setUserToken] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -27,25 +25,16 @@ export default function RegisterPage() {
     setError("");
 
     try {
-      const { token, user } = await Register(formData);
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-
-      // set token & trigger redirect
-      setUserToken(token);
-      setSuccess(true);
-    } catch (error: any) {
-      console.log("Registering failed: ", error);
-
-      setError(error.message || "Something went wrong.");
+      await Register(formData);
+      // Remove credentials saved by the old localStorage-based implementation.
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      router.replace("/dashboard");
+      router.refresh();
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Something went wrong.");
     }
   };
-
-  useEffect(() => {
-    if (success && userToken) {
-      router.push("/dashboard");
-    }
-  }, [success, userToken, router]);
 
   return (
     <main className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 min-h-screen items-center justify-center bg-[#F9F6E5]">
@@ -98,7 +87,6 @@ export default function RegisterPage() {
             textColor="text-[#2B2B2B]"
           />
           {error && <p className="text-red-500">{error}</p>}
-          {success && <p className="text-green-500">{success}</p>}
         </form>
       </section>
     </main>
